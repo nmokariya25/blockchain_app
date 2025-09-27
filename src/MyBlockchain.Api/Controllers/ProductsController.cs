@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MyBlockchain.Api.Handlers;
 using MyBlockchain.Application.Interfaces;
 using MyBlockchain.Domain.Entities;
+using System.Collections.Concurrent;
 
 namespace MyBlockchain.Api.Controllers
 {
@@ -9,10 +11,13 @@ namespace MyBlockchain.Api.Controllers
     public class ProductsController : ControllerBase
     {
         private readonly IProductService _productService;
+        private readonly ProductHandler _productHandler;
 
-        public ProductsController(IProductService productService)
+        public ProductsController(IProductService productService,
+            ProductHandler productHandler)
         {
             _productService = productService;
+            _productHandler = productHandler;
         }
 
         [HttpGet]
@@ -65,6 +70,23 @@ namespace MyBlockchain.Api.Controllers
                 return NotFound();
             }
             return NoContent();
+        }
+
+        [HttpPost("bulk_products")]
+        public async Task<IActionResult> CreateBulk([FromBody] List<Product> products)
+        {   
+            var newlyAddedProducts = await _productService.AddProductsInBulk(products);
+            if (newlyAddedProducts == null || !newlyAddedProducts.Any())
+                return BadRequest("No products were added.");
+
+            return Ok(newlyAddedProducts.Select(s => s.Id));
+        }
+
+        [HttpGet("top/{count}")]
+        public async Task<IActionResult> GetTopExpensive(int count)
+        {
+            var products = await _productService.GetTopExpensiveProductsAsync(count);
+            return Ok(products);
         }
     }
 }

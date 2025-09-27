@@ -1,5 +1,6 @@
 ﻿using MyBlockchain.Domain.Entities;
 using MyBlockchain.Infrastructure.Repositories;
+using MyBlockchain.Infrastructure.Repositories.Product;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,8 +13,7 @@ namespace MyBlockchain.Infrastructure.UnitOfWork
     {
         IGenericRepository<Product> Products { get; }
 
-        // Add more repositories as needed
-        // IGenericRepository<Category> Categories { get; }
+        IProductRepository ProductRepository { get; }
 
         Task<int> CompleteAsync();
     }

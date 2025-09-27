@@ -17,9 +17,8 @@ namespace MyBlockChain.Tests.Functional
         }
 
         private string GetApiProjectPath()
-        {
-            // Make sure this points to the *actual* API project folder
-            var dir = Directory.GetCurrentDirectory(); // This will be ...\bin\Debug\net8.0
+        {   
+            var dir = Directory.GetCurrentDirectory();
             var path = Path.Combine(dir, "..", "..", "..", "..","..", "src", "MyBlockChain.API");
             return Path.GetFullPath(path);
         }
