@@ -47,5 +47,21 @@ namespace MyBlockchain.Application.Services
             _unitOfWork.Products.Remove(product);
             await _unitOfWork.CompleteAsync();
         }
+
+        public async Task<IList<Product>> AddProductsInBulk(IList<Product> products)
+        {
+            foreach (var product in products)
+            {
+                await _unitOfWork.Products.AddAsync(product);
+            }
+            await _unitOfWork.CompleteAsync();
+            return products;
+        }
+
+        public async Task<IEnumerable<Product>> GetTopExpensiveProductsAsync(int count)
+        {
+            var products = await _unitOfWork.ProductRepository.GetTopExpensiveProducts(count);
+            return products;
+        }
     }
 }

@@ -1,5 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FluentValidation;
+using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using MyBlockchain.Api.Handlers;
+using MyBlockchain.Api.Validators;
 using MyBlockchain.Application.Interfaces;
 using MyBlockchain.Application.Services;
 using MyBlockchain.Infrastructure.Data;
@@ -7,6 +11,7 @@ using MyBlockchain.Infrastructure.UnitOfWork;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using NLog.Web;
+using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -32,11 +37,13 @@ try
     builder.Services.AddSwaggerGen();
 
     builder.Services.AddDbContext<AppDbContext>(options =>
-        options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+        options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"))
+        .EnableSensitiveDataLogging().LogTo(message => Debug.WriteLine(message), LogLevel.Information));
 
     // Register Unit of Work and Services (Dependency Injection)
     builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
     builder.Services.AddScoped<IProductService, ProductService>();
+    builder.Services.AddScoped<ProductHandler>();
 
     // Register Healthcheck
     builder.Services.AddHealthChecks(); // Register health checks
@@ -52,6 +59,11 @@ try
                   .AllowAnyMethod();
         });
     });
+
+    builder.Services.AddFluentValidationAutoValidation();
+    builder.Services.AddValidatorsFromAssemblyContaining<ProductValidator>();
+
+
 
     // Customizing the validation error response
     builder.Services.Configure<ApiBehaviorOptions>(options =>

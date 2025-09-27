@@ -14,5 +14,7 @@ namespace MyBlockchain.Application.Interfaces
         Task<Product> AddAsync(Product product);
         Task UpdateAsync(Product product);
         Task DeleteAsync(int id);
+        Task<IList<Product>> AddProductsInBulk(IList<Product> products);
+        Task<IEnumerable<Product>> GetTopExpensiveProductsAsync(int count);
     }
 }
