@@ -9,9 +9,10 @@ using System.Threading.Tasks;
 namespace MyBlockchain.Infrastructure.UnitOfWork
 {
     public interface IUnitOfWork : IDisposable
-    {   
+    {
         IGenericRepository<EthBlock> EthBlocks { get; }
         IGenericRepository<DashBlock> DashBlocks { get; }
+        IGenericRepository<BtcBlock> BtcBlocks { get; }
 
         Task<int> CompleteAsync();
     }

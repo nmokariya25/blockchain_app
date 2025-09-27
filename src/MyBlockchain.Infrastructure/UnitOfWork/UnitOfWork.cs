@@ -15,12 +15,14 @@ namespace MyBlockchain.Infrastructure.UnitOfWork
         
         public IGenericRepository<EthBlock> EthBlocks { get; }
         public IGenericRepository<DashBlock> DashBlocks { get; }
+        public IGenericRepository<BtcBlock> BtcBlocks { get; }
 
         public UnitOfWork(BlockCypherDbContext context)
         {
             _context = context;
             EthBlocks = new GenericRepository<EthBlock>(_context);
             DashBlocks = new GenericRepository<DashBlock>(_context);
+            BtcBlocks = new GenericRepository<BtcBlock>(_context);
         }
 
         public async Task<int> CompleteAsync()

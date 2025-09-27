@@ -8,6 +8,7 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using MyBlockchain.Api.ActionFilters;
 using MyBlockchain.Api.Validators;
 using MyBlockchain.Application.AutoMappers;
+using MyBlockchain.Application.Extensions;
 using MyBlockchain.Application.Interfaces;
 using MyBlockchain.Application.Models;
 using MyBlockchain.Application.Services;
@@ -28,7 +29,7 @@ namespace MyBlockchain.Api
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-            // NLog: Setup NLog for Dependency injection
+            
             NLog.LogManager.Setup().LoadConfigurationFromAppSettings();
             NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -51,12 +52,10 @@ namespace MyBlockchain.Api
                     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"))
                     .EnableSensitiveDataLogging().LogTo(message => Debug.WriteLine(message), LogLevel.Information));
 
-                builder.Services.AddHttpClient<IEthBlockService, EthBlockService>();
+                builder.Services.AddHttpClient();
 
                 // Register Unit of Work and Services (Dependency Injection)
-                builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-                builder.Services.AddScoped<IEthBlockService, EthBlockService>();
-                builder.Services.AddScoped<IDashBlockService, DashBlockService>();
+                builder.Services.AddApplicationServices();
 
                 // Automapper to map the DTOs and Entities
                 builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
