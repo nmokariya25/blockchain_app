@@ -72,5 +72,11 @@ namespace MyBlockchain.Application.Services
                 throw new InvalidOperationException("Failed to retrieve the latest Ethereum block.");
             return response;
         }
+
+        public async Task<IEnumerable<DashBlock>> FetchAllLatestAsync(int count = 0)
+        {
+            var latestBlocks = await _unitOfWork.DashBlockRepository.FetchAllLatestAsync(count);
+            return latestBlocks;
+        }
     }
 }

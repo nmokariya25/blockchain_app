@@ -35,7 +35,7 @@ namespace MyBlockchain.Api.Controllers
         [HttpGet("history/{count?}")]
         public async Task<IActionResult> GetLatestBlock(int count = 0)
         {
-            var latestBlock = await _dashBlockService.GetAllAsync();
+            var latestBlock = await _dashBlockService.FetchAllLatestAsync(count);
 
             var blockHistory = (count > 0)
                 ? latestBlock.OrderByDescending(b => b.CreatedAt).Take(count)
