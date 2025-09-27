@@ -14,7 +14,6 @@ namespace MyBlockchain.Infrastructure.Repositories.DashBlock
     {
         public DashBlockRepository(BlockCypherDbContext context) : base(context) { }
 
-
         public async Task<IEnumerable<Entity.DashBlock>> FetchAllLatestAsync(int count = 0)
         {
             if (count > 0)

@@ -3,6 +3,7 @@ using MyBlockchain.Application.DTOs;
 using MyBlockchain.Application.Interfaces;
 using MyBlockchain.Application.Models;
 using MyBlockchain.Domain.Entities;
+using MyBlockchain.Infrastructure.Repositories.DashBlocks;
 using MyBlockchain.Infrastructure.UnitOfWork;
 using System;
 using System.Collections.Generic;
@@ -19,18 +20,23 @@ namespace MyBlockchain.Application.Services
         private readonly BlockCypherEndPoints _blockCypherEndPoints;
         private readonly IUnitOfWork _unitOfWork;
 
-        public DashBlockService(IHttpClientFactory httpClientFactory,
+        private readonly IDashBlockRepository _dashBlockRepository;
+
+        public DashBlockService(
+            IHttpClientFactory httpClientFactory,
             IOptions<BlockCypherEndPoints> blockCypherEndPoints,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            IDashBlockRepository dashBlockRepository)
         {
             _httpClientFactory = httpClientFactory;
             _blockCypherEndPoints = blockCypherEndPoints.Value;
             _unitOfWork = unitOfWork;
+            _dashBlockRepository = dashBlockRepository;
         }
 
         public async Task<IEnumerable<DashBlock>> GetAllAsync()
         {
-            return await _unitOfWork.DashBlocks.GetAllAsync();
+            return await _dashBlockRepository.GetAllAsync();
         }
 
         public async Task<DashBlock?> GetByIdAsync(int id)
