@@ -9,10 +9,10 @@ using System.Threading.Tasks;
 
 namespace MyBlockChain.Tests.Functional.Controllers
 {
-    public class EthBlockApiTests : IClassFixture<CustomWebApplicationFactory<Program>>
+    public class DashBlockApiTests : IClassFixture<CustomWebApplicationFactory<Program>>
     {
         private readonly HttpClient _client;
-        public EthBlockApiTests(CustomWebApplicationFactory<Program> factory)
+        public DashBlockApiTests(CustomWebApplicationFactory<Program> factory)
         {
             _client = factory.CreateClient(
                 new WebApplicationFactoryClientOptions
@@ -22,16 +22,14 @@ namespace MyBlockChain.Tests.Functional.Controllers
         }
 
         [Fact]
-        public async Task Get_EthBlocks_Returns_OK()
+        public async Task Get_DashBlocks_Returns_OK()
         {
             var content = new StringContent("{}", Encoding.UTF8, "application/json");
-            var response = await _client.PostAsync("/api/EthBlock/fetch", content);
+            var response = await _client.PostAsync("/api/DashBlock/fetch", content);
             var body = await response.Content.ReadAsStringAsync();
-            Console.WriteLine($"Response Code: {response.StatusCode}");
-            Console.WriteLine($"Response Body: {body}");
-
+            
             // Assert   
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode); 
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
     }
 }

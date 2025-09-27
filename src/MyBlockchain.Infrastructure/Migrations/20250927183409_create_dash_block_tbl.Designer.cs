@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MyBlockchain.Infrastructure.Data;
 
@@ -10,9 +11,11 @@ using MyBlockchain.Infrastructure.Data;
 namespace MyBlockchain.Infrastructure.Migrations
 {
     [DbContext(typeof(BlockCypherDbContext))]
-    partial class BlockCypherDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250927183409_create_dash_block_tbl")]
+    partial class create_dash_block_tbl
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.20");

@@ -11,6 +11,7 @@ namespace MyBlockchain.Infrastructure.UnitOfWork
     public interface IUnitOfWork : IDisposable
     {   
         IGenericRepository<EthBlock> EthBlocks { get; }
+        IGenericRepository<DashBlock> DashBlocks { get; }
 
         Task<int> CompleteAsync();
     }

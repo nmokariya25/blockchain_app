@@ -15,7 +15,9 @@ namespace MyBlockchain.Application.AutoMappers
         public MappingProfile()
         {
             CreateMap<EthBlockDto, EthBlock>()
-                .ForMember(dest => dest.LatestUrl, opt => opt.MapFrom(src => src.LatestUrl))
+                .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => DateTime.UtcNow));
+
+            CreateMap<DashBlockDto, DashBlock>()
                 .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => DateTime.UtcNow));
         }
     }

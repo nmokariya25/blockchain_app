@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -7,8 +8,10 @@ using System.Threading.Tasks;
 namespace MyBlockchain.Domain.Entities
 {
     public class EthBlock
+
     {
-        public int Id { get; set; } // Auto-increment
+        [Key]
+        public int Id { get; set; } 
         public string? Name { get; set; }
         public long Height { get; set; }
         public string Hash { get; set; }

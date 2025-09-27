@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualStudio.TestPlatform.Common.Utilities;
 using MyBlockchain.Domain.Entities;
 using MyBlockchain.Infrastructure.Data;
 using MyBlockchain.Infrastructure.Repositories;
@@ -11,31 +10,31 @@ using System.Threading.Tasks;
 
 namespace MyBlockChain.Tests.Integration.Repositories
 {
-    public class EthBlockRepositoryTests
+    public class DashBlockRepositoryTests
     {
         private readonly BlockCypherDbContext _context;
-        private readonly GenericRepository<EthBlock> _repo;
+        private readonly GenericRepository<DashBlock> _repo;
 
-        public EthBlockRepositoryTests()
+        public DashBlockRepositoryTests()
         {
             var options = new DbContextOptionsBuilder<BlockCypherDbContext>()
-                .UseSqlite("Filename=EthBlockCypherDb.db")
+                .UseSqlite("Filename=DashBlockCypherDb.db")
                 .Options;
 
             _context = new BlockCypherDbContext(options);
             _context.Database.EnsureDeleted();
             _context.Database.EnsureCreated();
 
-            _repo = new GenericRepository<EthBlock>(_context);
+            _repo = new GenericRepository<DashBlock>(_context);
         }
 
         [Fact]
-        public async Task EthBlock_CRUD_Test()
+        public async Task DashBlock_CRUD_Test()
         {
-            var ethBlock = new EthBlock
+            var DashBlock = new DashBlock
             {
                 Id = 1,
-                Name = "ETH.main",
+                Name = "DASH.main",
                 Height = 23455011,
                 Hash = "0xabc123",
                 Time = DateTime.UtcNow,
@@ -44,35 +43,28 @@ namespace MyBlockChain.Tests.Integration.Repositories
                 PreviousUrl = "https://api.blockcypher.com/v1/eth/main/blocks/23455010",
                 PeerCount = 50,
                 UnconfirmedCount = 1200,
-                HighGasPrice = 200,
-                MediumGasPrice = 100,
-                LowGasPrice = 50,
-                HighPriorityFee = 150,
-                MediumPriorityFee = 75,
-                LowPriorityFee = 30,
-                BaseFee = 90,
                 LastForkHeight = 23400000,
                 LastForkHash = "0x789abc",
                 CreatedAt = DateTime.UtcNow
             };
-            await _repo.AddAsync(ethBlock);
+            await _repo.AddAsync(DashBlock);
             await _context.SaveChangesAsync();
 
-            var fetched = await _repo.GetByIdAsync(ethBlock.Id);
+            var fetched = await _repo.GetByIdAsync(DashBlock.Id);
             Assert.NotNull(fetched);
-            Assert.Equal("ETH.main", fetched.Name);
+            Assert.Equal("DASH.main", fetched.Name);
 
             fetched.Name = "Updated";
             _repo.Update(fetched);
             await _context.SaveChangesAsync();
 
-            var updated = await _repo.GetByIdAsync(ethBlock.Id);
+            var updated = await _repo.GetByIdAsync(DashBlock.Id);
             Assert.Equal("Updated", updated.Name);
 
             _repo.Remove(updated);
             await _context.SaveChangesAsync();
 
-            var deleted = await _repo.GetByIdAsync(ethBlock.Id);
+            var deleted = await _repo.GetByIdAsync(DashBlock.Id);
             Assert.Null(deleted);
         }
     }
