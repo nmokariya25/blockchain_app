@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MyBlockchain.Infrastructure.Data;
-using MyBlockchain.Infrastructure.Repositories.DashBlocks;
+using MyBlockchain.Infrastructure.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Entity = MyBlockchain.Domain.Entities;
 
-namespace MyBlockchain.Infrastructure.Repositories.DashBlock
+namespace MyBlockchain.Infrastructure.Repositories
 {
     public class DashBlockRepository : GenericRepository<Entity.DashBlock>, IDashBlockRepository
     {

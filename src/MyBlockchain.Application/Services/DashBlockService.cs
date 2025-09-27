@@ -3,7 +3,7 @@ using MyBlockchain.Application.DTOs;
 using MyBlockchain.Application.Interfaces;
 using MyBlockchain.Application.Models;
 using MyBlockchain.Domain.Entities;
-using MyBlockchain.Infrastructure.Repositories.DashBlocks;
+using MyBlockchain.Infrastructure.Interfaces;
 using MyBlockchain.Infrastructure.UnitOfWork;
 using System;
 using System.Collections.Generic;
@@ -19,7 +19,6 @@ namespace MyBlockchain.Application.Services
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly BlockCypherEndPoints _blockCypherEndPoints;
         private readonly IUnitOfWork _unitOfWork;
-
         private readonly IDashBlockRepository _dashBlockRepository;
 
         public DashBlockService(

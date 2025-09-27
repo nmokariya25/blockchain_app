@@ -3,6 +3,7 @@ using Moq;
 using MyBlockchain.Application.Models;
 using MyBlockchain.Application.Services;
 using MyBlockchain.Domain.Entities;
+using MyBlockchain.Infrastructure.Interfaces;
 using MyBlockchain.Infrastructure.Repositories;
 using MyBlockchain.Infrastructure.UnitOfWork;
 using System;
@@ -20,11 +21,13 @@ namespace MyBlockChain.Tests.Unit.Services
         private readonly Mock<IGenericRepository<DashBlock>> _mockRepo;
         private readonly Mock<IHttpClientFactory> _mockHttpClientFactory;
         private readonly Mock<IOptions<BlockCypherEndPoints>> _mockOptions;
+        private readonly IDashBlockRepository _mockDashRepo;
 
         public DashBlockServiceTests()
         {
             _mockUow = new Mock<IUnitOfWork>();
             _mockRepo = new Mock<IGenericRepository<DashBlock>>();
+            _mockDashRepo = new Mock<IDashBlockRepository>().Object;
             _mockUow.Setup(u => u.DashBlocks).Returns(_mockRepo.Object);
 
             _mockHttpClientFactory = new Mock<IHttpClientFactory>();
@@ -34,7 +37,8 @@ namespace MyBlockChain.Tests.Unit.Services
             _dashBlockService = new DashBlockService(
                 _mockHttpClientFactory.Object,
                 _mockOptions.Object,
-                _mockUow.Object
+                _mockUow.Object,
+                _mockDashRepo
             );
         }
 

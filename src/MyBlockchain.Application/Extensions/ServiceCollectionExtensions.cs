@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using MyBlockchain.Application.Interfaces;
 using MyBlockchain.Application.Services;
-using MyBlockchain.Infrastructure.Repositories.DashBlock;
-using MyBlockchain.Infrastructure.Repositories.DashBlocks;
+using MyBlockchain.Infrastructure.Interfaces;
+using MyBlockchain.Infrastructure.Repositories;
 using MyBlockchain.Infrastructure.UnitOfWork;
 using System;
 using System.Collections.Generic;

@@ -1,6 +1,6 @@
 ﻿using MyBlockchain.Domain.Entities;
+using MyBlockchain.Infrastructure.Interfaces;
 using MyBlockchain.Infrastructure.Repositories;
-using MyBlockchain.Infrastructure.Repositories.DashBlocks;
 using System;
 using System.Collections.Generic;
 using System.Linq;
