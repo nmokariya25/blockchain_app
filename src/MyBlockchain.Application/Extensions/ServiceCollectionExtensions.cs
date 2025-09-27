@@ -18,7 +18,8 @@ namespace MyBlockchain.Application.Extensions
             services.AddScoped<IEthBlockService, EthBlockService>();
             services.AddScoped<IDashBlockService, DashBlockService>();
             services.AddScoped<IBtcBlockService, BtcBlockService>();
-            
+            services.AddScoped<ILtcBlockService, LtcBlockService>();
+
             return services;
         }
     }

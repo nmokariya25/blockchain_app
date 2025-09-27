@@ -18,6 +18,7 @@ namespace MyBlockchain.Infrastructure.Data
         public DbSet<EthBlock> EthBlocks { get; set; }
         public DbSet<DashBlock> DashBlocks { get; set; }
         public DbSet<BtcBlock> BtcBlocks { get; set; }
+        public DbSet<LtcBlock> LtcBlocks { get; set; }
         public DbSet<ApiAuditLog> ApiAudits { get; set; }
         
 
@@ -26,6 +27,7 @@ namespace MyBlockchain.Infrastructure.Data
             modelBuilder.Entity<EthBlock>().ToTable("EthBlocks");
             modelBuilder.Entity<DashBlock>().ToTable("DashBlocks");
             modelBuilder.Entity<BtcBlock>().ToTable("BtcBlocks");
+            modelBuilder.Entity<LtcBlock>().ToTable("LtcBlocks");
             modelBuilder.Entity<ApiAuditLog>().ToTable("ApiAudits");
         }
     }

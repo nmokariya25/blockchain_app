@@ -16,6 +16,6 @@ namespace MyBlockchain.Application.Models
 
         public string TestBlock { get; set; }
 
-        public string ItcBlock { get; set; }
+        public string LtcBlock { get; set; }
     }
 }
