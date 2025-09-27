@@ -3,6 +3,7 @@ using MyBlockchain.Application.DTOs;
 using MyBlockchain.Application.Interfaces;
 using MyBlockchain.Application.Models;
 using MyBlockchain.Domain.Entities;
+using MyBlockchain.Infrastructure.Interfaces;
 using MyBlockchain.Infrastructure.UnitOfWork;
 using System;
 using System.Collections.Generic;
@@ -18,19 +19,23 @@ namespace MyBlockchain.Application.Services
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly BlockCypherEndPoints _blockCypherEndPoints;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IDashBlockRepository _dashBlockRepository;
 
-        public DashBlockService(IHttpClientFactory httpClientFactory,
+        public DashBlockService(
+            IHttpClientFactory httpClientFactory,
             IOptions<BlockCypherEndPoints> blockCypherEndPoints,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            IDashBlockRepository dashBlockRepository)
         {
             _httpClientFactory = httpClientFactory;
             _blockCypherEndPoints = blockCypherEndPoints.Value;
             _unitOfWork = unitOfWork;
+            _dashBlockRepository = dashBlockRepository;
         }
 
         public async Task<IEnumerable<DashBlock>> GetAllAsync()
         {
-            return await _unitOfWork.DashBlocks.GetAllAsync();
+            return await _dashBlockRepository.GetAllAsync();
         }
 
         public async Task<DashBlock?> GetByIdAsync(int id)
@@ -71,6 +76,12 @@ namespace MyBlockchain.Application.Services
             if (response is null)
                 throw new InvalidOperationException("Failed to retrieve the latest Ethereum block.");
             return response;
+        }
+
+        public async Task<IEnumerable<DashBlock>> FetchAllLatestAsync(int count = 0)
+        {
+            var latestBlocks = await _unitOfWork.DashBlockRepository.FetchAllLatestAsync(count);
+            return latestBlocks;
         }
     }
 }

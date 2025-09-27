@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MyBlockchain.Infrastructure.Data;
+using MyBlockchain.Infrastructure.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;

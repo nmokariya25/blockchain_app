@@ -1,5 +1,6 @@
 ﻿using MyBlockchain.Domain.Entities;
 using MyBlockchain.Infrastructure.Data;
+using MyBlockchain.Infrastructure.Interfaces;
 using MyBlockchain.Infrastructure.Repositories;
 using System;
 using System.Collections.Generic;
@@ -18,6 +19,10 @@ namespace MyBlockchain.Infrastructure.UnitOfWork
         public IGenericRepository<BtcBlock> BtcBlocks { get; }
         public IGenericRepository<LtcBlock> LtcBlocks { get; }
         public IGenericRepository<BitCoinBlock> BitCoinBlocks { get; }
+        public IGenericRepository<ApiAuditLog> ApiAuditLogs { get; }
+
+        // Custom Repository
+        public IDashBlockRepository DashBlockRepository { get; }
 
         public UnitOfWork(BlockCypherDbContext context)
         {
@@ -27,6 +32,8 @@ namespace MyBlockchain.Infrastructure.UnitOfWork
             BtcBlocks = new GenericRepository<BtcBlock>(_context);
             LtcBlocks = new GenericRepository<LtcBlock>(_context);
             BitCoinBlocks = new GenericRepository<BitCoinBlock>(_context);
+            ApiAuditLogs = new GenericRepository<ApiAuditLog>(_context);
+            DashBlockRepository = new DashBlockRepository(_context);
         }
 
         public async Task<int> CompleteAsync()

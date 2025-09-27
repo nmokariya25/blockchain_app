@@ -1,4 +1,5 @@
 ﻿using MyBlockchain.Domain.Entities;
+using MyBlockchain.Infrastructure.Interfaces;
 using MyBlockchain.Infrastructure.Repositories;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,10 @@ namespace MyBlockchain.Infrastructure.UnitOfWork
         IGenericRepository<BtcBlock> BtcBlocks { get; }
         IGenericRepository<LtcBlock> LtcBlocks { get; }
         IGenericRepository<BitCoinBlock> BitCoinBlocks { get; }
+        IGenericRepository<ApiAuditLog> ApiAuditLogs { get; }
+
+        //Custom Repositories
+        IDashBlockRepository DashBlockRepository { get; }
 
         Task<int> CompleteAsync();
     }

@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using MyBlockchain.Application.Interfaces;
 using MyBlockchain.Application.Services;
+using MyBlockchain.Infrastructure.Interfaces;
+using MyBlockchain.Infrastructure.Repositories;
 using MyBlockchain.Infrastructure.UnitOfWork;
 using System;
 using System.Collections.Generic;
@@ -20,7 +22,14 @@ namespace MyBlockchain.Application.Extensions
             services.AddScoped<IBtcBlockService, BtcBlockService>();
             services.AddScoped<ILtcBlockService, LtcBlockService>();
             services.AddScoped<IBitCoinBlockService, BitCoinBlockService>();
+            services.AddScoped<IApiAuditService, ApiAuditService>();
 
+            return services;
+        }
+
+        public static IServiceCollection AddApplicationRepositories(this IServiceCollection services)
+        {
+            services.AddScoped<IDashBlockRepository, DashBlockRepository>();
             return services;
         }
     }

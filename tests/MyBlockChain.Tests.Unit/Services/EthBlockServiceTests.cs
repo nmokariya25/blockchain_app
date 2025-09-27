@@ -4,6 +4,7 @@ using MyBlockchain.Application.Interfaces;
 using MyBlockchain.Application.Models;
 using MyBlockchain.Application.Services;
 using MyBlockchain.Domain.Entities;
+using MyBlockchain.Infrastructure.Interfaces;
 using MyBlockchain.Infrastructure.Repositories;
 using MyBlockchain.Infrastructure.UnitOfWork;
 using System;
