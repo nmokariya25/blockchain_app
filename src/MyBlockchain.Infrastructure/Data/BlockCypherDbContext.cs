@@ -16,11 +16,14 @@ namespace MyBlockchain.Infrastructure.Data
         }
 
         public DbSet<EthBlock> EthBlocks { get; set; }
+        public DbSet<DashBlock> DashBlocks { get; set; }
         public DbSet<ApiAuditLog> ApiAudits { get; set; }
+        
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<EthBlock>().ToTable("EthBlocks");
+            modelBuilder.Entity<DashBlock>().ToTable("DashBlocks");
             modelBuilder.Entity<ApiAuditLog>().ToTable("ApiAudits");
         }
     }

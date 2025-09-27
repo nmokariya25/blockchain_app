@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 
 namespace MyBlockchain.Application.Interfaces
 {
-    public interface IEthBlockService
+    public interface IDashBlockService
     {
-        Task<IEnumerable<EthBlock>> GetAllAsync();
-        Task<EthBlock> GetByIdAsync(int id);
-        Task<EthBlock> AddAsync(EthBlock ethBlock);
-        Task UpdateAsync(EthBlock ethBlock);
+        Task<IEnumerable<DashBlock>> GetAllAsync();
+        Task<DashBlock> GetByIdAsync(int id);
+        Task<DashBlock> AddAsync(DashBlock ethBlock);
+        Task UpdateAsync(DashBlock ethBlock);
         Task DeleteAsync(int id);
-        Task<EthBlockDto> GetLatestBlockAsync();
+        Task<DashBlockDto> GetLatestBlockAsync();
     }
 }

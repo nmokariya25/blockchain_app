@@ -56,7 +56,8 @@ namespace MyBlockchain.Api
                 // Register Unit of Work and Services (Dependency Injection)
                 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
                 builder.Services.AddScoped<IEthBlockService, EthBlockService>();
-                
+                builder.Services.AddScoped<IDashBlockService, DashBlockService>();
+
                 // Automapper to map the DTOs and Entities
                 builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
 

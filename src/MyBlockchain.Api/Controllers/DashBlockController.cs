@@ -7,25 +7,27 @@ namespace MyBlockchain.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class EthBlockController : ControllerBase
+    public class DashBlockController : ControllerBase
     {
-        private readonly IEthBlockService _ethService;
+        private readonly IDashBlockService _dashBlockService;
         private readonly IMapper _mapper;
 
-        public EthBlockController(IEthBlockService ethService, IMapper mapper)
+        public DashBlockController(
+            IDashBlockService dashBlockService,
+            IMapper mapper)
         {
-            this._ethService = ethService;
+            this._dashBlockService = dashBlockService;
             this._mapper = mapper;
         }
 
         [HttpPost("fetch")]
         public async Task<IActionResult> SaveLatestBlock()
         {
-            var dto = await _ethService.GetLatestBlockAsync();
+            var dto = await _dashBlockService.GetLatestBlockAsync();
             if (dto == null) return NotFound("No data received from API.");
 
-            var entity = _mapper.Map<EthBlock>(dto);
-            await _ethService.AddAsync(entity);
+            var entity = _mapper.Map<DashBlock>(dto);
+            await _dashBlockService.AddAsync(entity);
 
             return Ok(new { message = "Block data saved successfully", blockHeight = entity.Height });
         }
@@ -33,7 +35,7 @@ namespace MyBlockchain.Api.Controllers
         [HttpGet("history/{count?}")]
         public async Task<IActionResult> GetLatestBlock(int count = 0)
         {
-            var latestBlock = await _ethService.GetAllAsync();
+            var latestBlock = await _dashBlockService.GetAllAsync();
 
             var blockHistory = (count > 0)
                 ? latestBlock.OrderByDescending(b => b.CreatedAt).Take(count)
@@ -45,5 +47,4 @@ namespace MyBlockchain.Api.Controllers
             return Ok(blockHistory);
         }
     }
-
 }
