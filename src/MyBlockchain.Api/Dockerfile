@@ -1,30 +1,30 @@
-# See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
-
-# This stage is used when running from VS in fast mode (Default for Debug configuration)
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-USER $APP_UID
-WORKDIR /app
-EXPOSE 8080
-EXPOSE 8081
-
-
-# This stage is used to build the service project
+# ------------- BUILD STAGE -------------
+# Use appropriate SDK version (adjust if your project targets .NET 6, 7, 8, etc.)
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["src/MyBlockchain.Api/MyBlockchain.Api.csproj", "src/MyBlockchain.Api/"]
-RUN dotnet restore "./src/MyBlockchain.Api/MyBlockchain.Api.csproj"
+
+# Copy the .csproj and restore (so that restore is cached)
+COPY ["MyBlockchain.Api/MyBlockchain.Api.csproj", "MyBlockchain.Api/"]
+RUN dotnet restore "MyBlockchain.Api/MyBlockchain.Api.csproj"
+
+# Copy all source files
 COPY . .
-WORKDIR "/src/src/MyBlockchain.Api"
-RUN dotnet build "./MyBlockchain.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
-# This stage is used to publish the service project to be copied to the final stage
-FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./MyBlockchain.Api.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+WORKDIR "/src/MyBlockchain.Api"
+# Publish in Release mode
+RUN dotnet publish "MyBlockchain.Api.csproj" -c Release -o /app/publish
 
-# This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
-FROM base AS final
+# ------------- RUNTIME STAGE -------------
+FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS runtime
 WORKDIR /app
-COPY --from=publish /app/publish .
+
+# Copy published output from build stage
+COPY --from=build /app/publish .
+
+# Configure environment (e.g. listen on port 80)
+ENV ASPNETCORE_URLS="http://+:80"
+# (If your app expects other environment variables, set them here or via docker-compose)
+
+EXPOSE 80
+
 ENTRYPOINT ["dotnet", "MyBlockchain.Api.dll"]

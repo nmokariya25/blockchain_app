@@ -12,7 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MyBlockChain.Tests.Functional
+namespace MyBlockChain.Tests.Functional.TestFixtures
 {
     public class CustomWebApplicationFactory<TProgram> : WebApplicationFactory<TProgram> where TProgram : class
     {
@@ -54,5 +54,4 @@ namespace MyBlockChain.Tests.Functional
             _connection.Close(); // Important: clean up the connection
         }
     }
-
 }
