@@ -15,5 +15,12 @@ namespace MyBlockchain.Infrastructure.Data
 
         }
         public DbSet<Product> Products { get; set; }
+        public DbSet<EthBlock> EthBlocks { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<EthBlock>().ToTable("EthBlocks");
+        }
+
     }
 }

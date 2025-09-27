@@ -1,10 +1,13 @@
 ﻿using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MyBlockchain.Api.Handlers;
 using MyBlockchain.Api.Validators;
+using MyBlockchain.Application.AutoMappers;
 using MyBlockchain.Application.Interfaces;
+using MyBlockchain.Application.Models;
 using MyBlockchain.Application.Services;
 using MyBlockchain.Infrastructure.Data;
 using MyBlockchain.Infrastructure.UnitOfWork;
@@ -27,7 +30,7 @@ namespace MyBlockchain.Api
             NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
             try
-            {
+            {   
                 logger.Debug("init main");
 
                 // Add services to the container.
@@ -45,10 +48,20 @@ namespace MyBlockchain.Api
                     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"))
                     .EnableSensitiveDataLogging().LogTo(message => Debug.WriteLine(message), LogLevel.Information));
 
+                builder.Services.AddHttpClient<IEthBlockService, EthBlockService>();
+
                 // Register Unit of Work and Services (Dependency Injection)
                 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
                 builder.Services.AddScoped<IProductService, ProductService>();
+                builder.Services.AddScoped<IEthBlockService, EthBlockService>();
                 builder.Services.AddScoped<ProductHandler>();
+
+                // Automapper to map the DTOs and Entities
+                builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
+
+                // Read the configuration from appsettings.json
+                builder.Services.AddSingleton<BlockCypherEndPoints>();
+                builder.Services.Configure<BlockCypherEndPoints>(builder.Configuration.GetSection("BlockCypherEndPoints"));
 
                 // Register Healthcheck
                 builder.Services.AddHealthChecks(); // Register health checks
