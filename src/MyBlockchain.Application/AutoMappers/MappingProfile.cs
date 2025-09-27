@@ -19,6 +19,9 @@ namespace MyBlockchain.Application.AutoMappers
 
             CreateMap<DashBlockDto, DashBlock>()
                 .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => DateTime.UtcNow));
+
+            CreateMap<BtcBlockDto, BtcBlock>()
+                .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => DateTime.UtcNow));
         }
     }
 }
