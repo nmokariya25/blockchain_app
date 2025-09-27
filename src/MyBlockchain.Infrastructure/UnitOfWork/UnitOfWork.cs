@@ -17,6 +17,7 @@ namespace MyBlockchain.Infrastructure.UnitOfWork
         public IGenericRepository<DashBlock> DashBlocks { get; }
         public IGenericRepository<BtcBlock> BtcBlocks { get; }
         public IGenericRepository<LtcBlock> LtcBlocks { get; }
+        public IGenericRepository<BitCoinBlock> BitCoinBlocks { get; }
 
         public UnitOfWork(BlockCypherDbContext context)
         {
@@ -25,6 +26,7 @@ namespace MyBlockchain.Infrastructure.UnitOfWork
             DashBlocks = new GenericRepository<DashBlock>(_context);
             BtcBlocks = new GenericRepository<BtcBlock>(_context);
             LtcBlocks = new GenericRepository<LtcBlock>(_context);
+            BitCoinBlocks = new GenericRepository<BitCoinBlock>(_context);
         }
 
         public async Task<int> CompleteAsync()
