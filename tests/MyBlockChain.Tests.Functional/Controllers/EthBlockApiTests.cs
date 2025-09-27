@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
+using MyBlockChain.Tests.Functional.TestFixtures;
 using System;
 using System.Collections.Generic;
 using System.Linq;
