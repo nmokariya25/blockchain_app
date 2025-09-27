@@ -2,9 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using MyBlockchain.Application.Interfaces;
 using MyBlockchain.Domain.Entities;
-using MyBlockchain.Infrastructure.UnitOfWork;
-using Newtonsoft.Json;
-using Swashbuckle.AspNetCore.Annotations;
 
 namespace MyBlockchain.Api.Controllers
 {
