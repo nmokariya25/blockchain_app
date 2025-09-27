@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
+using MyBlockchain.Application.Interfaces;
 using MyBlockchain.Domain.Entities;
 using MyBlockchain.Infrastructure.Data;
 using System.Text;
@@ -7,11 +8,11 @@ namespace MyBlockchain.Api.ActionFilters
 {
     public class ApiAuditLogFilter : IAsyncActionFilter
     {
-        private readonly BlockCypherDbContext _dbContext;
+        private readonly IApiAuditService _apiAuditService;
 
-        public ApiAuditLogFilter(BlockCypherDbContext dbContext)
+        public ApiAuditLogFilter(IApiAuditService apiAuditService)
         {
-            _dbContext = dbContext;
+            this._apiAuditService = apiAuditService;
         }
 
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
@@ -42,8 +43,7 @@ namespace MyBlockchain.Api.ActionFilters
             var response = context.HttpContext.Response;
             auditLog.StatusCode = response.StatusCode;
             auditLog.ResponseDate = DateTime.UtcNow;
-            _dbContext.ApiAudits.Add(auditLog);
-            await _dbContext.SaveChangesAsync();
+            await _apiAuditService.AddAsync(auditLog);
         }
     }
 
