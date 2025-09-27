@@ -22,6 +22,9 @@ namespace MyBlockchain.Application.AutoMappers
 
             CreateMap<BtcBlockDto, BtcBlock>()
                 .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => DateTime.UtcNow));
+
+            CreateMap<LtcBlockDto, LtcBlock>()
+                .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => DateTime.UtcNow));
         }
     }
 }
