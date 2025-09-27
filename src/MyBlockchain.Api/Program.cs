@@ -1,8 +1,10 @@
 ﻿using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using MyBlockchain.Api.Handlers;
 using MyBlockchain.Api.Validators;
 using MyBlockchain.Application.AutoMappers;
@@ -17,6 +19,7 @@ using NLog.Web;
 using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace MyBlockchain.Api
 {
@@ -64,18 +67,16 @@ namespace MyBlockchain.Api
                 builder.Services.Configure<BlockCypherEndPoints>(builder.Configuration.GetSection("BlockCypherEndPoints"));
 
                 // Register Healthcheck
-                builder.Services.AddHealthChecks(); // Register health checks
-
+                builder.Services.AddHealthChecks()
+                    .AddCheck("self", () => HealthCheckResult.Healthy());
+                
                 // CORS policy
                 builder.Services.AddCors(options =>
                 {
-                    options.AddPolicy("front_end_cors_policy_port_3000", policy =>
-                    {
-                        // localhost:3000 port is for front end application if this API needs to be consumed.
-                        policy.WithOrigins("http://localhost:3000")
-                              .AllowAnyHeader()
-                              .AllowAnyMethod();
-                    });
+                    options.AddDefaultPolicy(builder =>
+                        builder.AllowAnyOrigin()
+                               .AllowAnyHeader()
+                               .AllowAnyMethod());
                 });
 
                 builder.Services.AddFluentValidationAutoValidation();
@@ -118,14 +119,38 @@ namespace MyBlockchain.Api
                 }
 
                 app.UseHttpsRedirection();
-                app.UseCors("front_end_cors_policy_port_3000");
+                app.UseCors();
 
                 app.UseAuthorization();
 
                 app.MapControllers();
 
                 // Healthcheck endpoint
-                app.MapHealthChecks("/health");
+                // Map the /health endpoint and return JSON directly
+                app.MapHealthChecks("/health", new HealthCheckOptions
+                {
+                    ResponseWriter = async (context, report) =>
+                    {
+                        context.Response.ContentType = "application/json";
+
+                        var result = new
+                        {
+                            status = report.Status.ToString(),
+                            checks = report.Entries.Select(e => new
+                            {
+                                name = e.Key,
+                                status = e.Value.Status.ToString(),
+                                description = e.Value.Description
+                            }),
+                            timestamp = DateTime.UtcNow
+                        };
+
+                        await context.Response.WriteAsync(JsonSerializer.Serialize(result, new JsonSerializerOptions
+                        {
+                            WriteIndented = true
+                        }));
+                    }
+                });
 
                 app.Run();
             }
