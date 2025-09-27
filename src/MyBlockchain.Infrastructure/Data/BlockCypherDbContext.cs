@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 
 namespace MyBlockchain.Infrastructure.Data
 {
-    public class AppDbContext : DbContext
+    public class BlockCypherDbContext : DbContext
     {
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+        public BlockCypherDbContext(DbContextOptions<BlockCypherDbContext> options) : base(options)
         {
 
         }
-        public DbSet<Product> Products { get; set; }
+
         public DbSet<EthBlock> EthBlocks { get; set; }
         public DbSet<ApiAuditLog> ApiAudits { get; set; }
 
@@ -23,6 +23,5 @@ namespace MyBlockchain.Infrastructure.Data
             modelBuilder.Entity<EthBlock>().ToTable("EthBlocks");
             modelBuilder.Entity<ApiAuditLog>().ToTable("ApiAudits");
         }
-
     }
 }

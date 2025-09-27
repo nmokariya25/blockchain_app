@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using MyBlockchain.Api.ActionFilters;
-using MyBlockchain.Api.Handlers;
 using MyBlockchain.Api.Validators;
 using MyBlockchain.Application.AutoMappers;
 using MyBlockchain.Application.Interfaces;
@@ -48,7 +47,7 @@ namespace MyBlockchain.Api
                 builder.Services.AddEndpointsApiExplorer();
                 builder.Services.AddSwaggerGen();
 
-                builder.Services.AddDbContext<AppDbContext>(options =>
+                builder.Services.AddDbContext<BlockCypherDbContext>(options =>
                     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"))
                     .EnableSensitiveDataLogging().LogTo(message => Debug.WriteLine(message), LogLevel.Information));
 
@@ -56,10 +55,8 @@ namespace MyBlockchain.Api
 
                 // Register Unit of Work and Services (Dependency Injection)
                 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-                builder.Services.AddScoped<IProductService, ProductService>();
                 builder.Services.AddScoped<IEthBlockService, EthBlockService>();
-                builder.Services.AddScoped<ProductHandler>();
-
+                
                 // Automapper to map the DTOs and Entities
                 builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
 
@@ -81,7 +78,7 @@ namespace MyBlockchain.Api
                 });
 
                 builder.Services.AddFluentValidationAutoValidation();
-                builder.Services.AddValidatorsFromAssemblyContaining<ProductValidator>();
+                builder.Services.AddValidatorsFromAssemblyContaining<SampleValidator>();
 
                 // Register Action Filters
                 builder.Services.AddScoped<ApiAuditLogFilter>();
