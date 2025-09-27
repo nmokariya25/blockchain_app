@@ -18,8 +18,6 @@ namespace MyBlockchain.Api.ActionFilters
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
             var request = context.HttpContext.Request;
-
-            // Read Request Info
             request.EnableBuffering();
             var requestBody = "";
             using (var reader = new StreamReader(request.Body, Encoding.UTF8, detectEncodingFromByteOrderMarks: false, leaveOpen: true))
