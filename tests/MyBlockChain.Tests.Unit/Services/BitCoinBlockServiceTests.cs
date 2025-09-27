@@ -13,25 +13,25 @@ using System.Threading.Tasks;
 
 namespace MyBlockChain.Tests.Unit.Services
 {
-    public class LtcBlockServiceTests
+    public class BitCoinBlockServiceTests
     {
-        private readonly LtcBlockService _ltcBlockService;
+        private readonly BitCoinBlockService _bitCoinBlockService;
         private readonly Mock<IUnitOfWork> _mockUow;
-        private readonly Mock<IGenericRepository<LtcBlock>> _mockRepo;
+        private readonly Mock<IGenericRepository<BitCoinBlock>> _mockRepo;
         private readonly Mock<IHttpClientFactory> _mockHttpClientFactory;
         private readonly Mock<IOptions<BlockCypherEndPoints>> _mockOptions;
 
-        public LtcBlockServiceTests()
+        public BitCoinBlockServiceTests()
         {
             _mockUow = new Mock<IUnitOfWork>();
-            _mockRepo = new Mock<IGenericRepository<LtcBlock>>();
-            _mockUow.Setup(u => u.LtcBlocks).Returns(_mockRepo.Object);
+            _mockRepo = new Mock<IGenericRepository<BitCoinBlock>>();
+            _mockUow.Setup(u => u.BitCoinBlocks).Returns(_mockRepo.Object);
 
             _mockHttpClientFactory = new Mock<IHttpClientFactory>();
             _mockOptions = new Mock<IOptions<BlockCypherEndPoints>>();
             _mockOptions.Setup(o => o.Value).Returns(new BlockCypherEndPoints());
 
-            _ltcBlockService = new LtcBlockService(
+            _bitCoinBlockService = new BitCoinBlockService(
                 _mockHttpClientFactory.Object,
                 _mockOptions.Object,
                 _mockUow.Object
@@ -39,12 +39,12 @@ namespace MyBlockChain.Tests.Unit.Services
         }
 
         [Fact]
-        public async Task AddLtcBlock_ReturnsLtcBlock()
+        public async Task AddBitCoinBlock_ReturnsBitCoinBlock()
         {
-            var ltcBlock = new LtcBlock
+            var BitCoinBlock = new BitCoinBlock
             {
                 Id = 1,
-                Name = "LTC.main",
+                Name = "BTC.test3",
                 Height = 23455011,
                 Hash = "0xabc123",
                 Time = DateTime.UtcNow,
@@ -57,13 +57,13 @@ namespace MyBlockChain.Tests.Unit.Services
                 LastForkHash = "0x789abc",
                 CreatedAt = DateTime.UtcNow
             };
-            _mockRepo.Setup(r => r.AddAsync(ltcBlock)).Returns(Task.CompletedTask);
+            _mockRepo.Setup(r => r.AddAsync(BitCoinBlock)).Returns(Task.CompletedTask);
             _mockUow.Setup(u => u.CompleteAsync()).ReturnsAsync(1);
 
-            var result = await _ltcBlockService.AddAsync(ltcBlock);
+            var result = await _bitCoinBlockService.AddAsync(BitCoinBlock);
 
-            Assert.Equal(ltcBlock, result);
-            _mockRepo.Verify(r => r.AddAsync(ltcBlock), Times.Once);
+            Assert.Equal(BitCoinBlock, result);
+            _mockRepo.Verify(r => r.AddAsync(BitCoinBlock), Times.Once);
         }
     }
 }

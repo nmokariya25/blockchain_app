@@ -14,6 +14,7 @@ namespace MyBlockchain.Infrastructure.UnitOfWork
         IGenericRepository<DashBlock> DashBlocks { get; }
         IGenericRepository<BtcBlock> BtcBlocks { get; }
         IGenericRepository<LtcBlock> LtcBlocks { get; }
+        IGenericRepository<BitCoinBlock> BitCoinBlocks { get; }
 
         Task<int> CompleteAsync();
     }

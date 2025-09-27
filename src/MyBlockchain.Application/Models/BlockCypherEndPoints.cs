@@ -14,7 +14,7 @@ namespace MyBlockchain.Application.Models
 
         public string BtcBlock { get; set; }
 
-        public string TestBlock { get; set; }
+        public string BitCoinBlock { get; set; }
 
         public string LtcBlock { get; set; }
     }

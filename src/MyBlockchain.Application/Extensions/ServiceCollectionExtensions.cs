@@ -19,6 +19,7 @@ namespace MyBlockchain.Application.Extensions
             services.AddScoped<IDashBlockService, DashBlockService>();
             services.AddScoped<IBtcBlockService, BtcBlockService>();
             services.AddScoped<ILtcBlockService, LtcBlockService>();
+            services.AddScoped<IBitCoinBlockService, BitCoinBlockService>();
 
             return services;
         }
