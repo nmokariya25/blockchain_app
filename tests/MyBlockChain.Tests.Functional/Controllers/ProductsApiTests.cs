@@ -17,10 +17,11 @@ namespace MyBlockChain.Tests.Functional.Controllers
 
         public ProductsApiTests(CustomWebApplicationFactory<Program> factory)
         {
-            _client = factory.CreateClient(new WebApplicationFactoryClientOptions
-            {
-                BaseAddress = new Uri("http://localhost:5218")
-            });
+            _client = factory.CreateClient(
+                new WebApplicationFactoryClientOptions
+                {
+                    BaseAddress = new Uri("http://localhost:5218")
+                });
         }
 
         [Fact]
