@@ -15,12 +15,14 @@ namespace MyBlockchain.Infrastructure.UnitOfWork
         private readonly AppDbContext _context;
 
         public IGenericRepository<Product> Products { get; }
+        public IGenericRepository<EthBlock> EthBlocks { get; }
         public IProductRepository ProductRepository { get; }
 
         public UnitOfWork(AppDbContext context)
         {
             _context = context;
             Products = new GenericRepository<Product>(_context);
+            EthBlocks = new GenericRepository<EthBlock>(_context);
             ProductRepository = new ProductRepository(_context);
         }
 

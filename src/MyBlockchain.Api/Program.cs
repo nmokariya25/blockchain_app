@@ -1,10 +1,16 @@
 ﻿using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using MyBlockchain.Api.ActionFilters;
 using MyBlockchain.Api.Handlers;
 using MyBlockchain.Api.Validators;
+using MyBlockchain.Application.AutoMappers;
 using MyBlockchain.Application.Interfaces;
+using MyBlockchain.Application.Models;
 using MyBlockchain.Application.Services;
 using MyBlockchain.Infrastructure.Data;
 using MyBlockchain.Infrastructure.UnitOfWork;
@@ -14,110 +20,158 @@ using NLog.Web;
 using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
-var builder = WebApplication.CreateBuilder(args);
-
-// NLog: Setup NLog for Dependency injection
-NLog.LogManager.Setup().LoadConfigurationFromAppSettings();
-NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
-
-try
+namespace MyBlockchain.Api
 {
-    logger.Debug("init main");
-
-    // Add services to the container.
-    builder.Services.AddControllers();
-
-    builder.Logging.ClearProviders();
-    builder.Logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
-    builder.Host.UseNLog();  // NLog: setup NLog for Dependency injection
-
-    // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-    builder.Services.AddEndpointsApiExplorer();
-    builder.Services.AddSwaggerGen();
-
-    builder.Services.AddDbContext<AppDbContext>(options =>
-        options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"))
-        .EnableSensitiveDataLogging().LogTo(message => Debug.WriteLine(message), LogLevel.Information));
-
-    // Register Unit of Work and Services (Dependency Injection)
-    builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-    builder.Services.AddScoped<IProductService, ProductService>();
-    builder.Services.AddScoped<ProductHandler>();
-
-    // Register Healthcheck
-    builder.Services.AddHealthChecks(); // Register health checks
-
-    // CORS policy
-    builder.Services.AddCors(options =>
+    public class Program
     {
-        options.AddPolicy("front_end_cors_policy_port_3000", policy =>
+        public static void Main(string[] args)
         {
-            // localhost:3000 port is for front end application if this API needs to be consumed.
-            policy.WithOrigins("http://localhost:3000")
-                  .AllowAnyHeader()
-                  .AllowAnyMethod();
-        });
-    });
+            var builder = WebApplication.CreateBuilder(args);
+            // NLog: Setup NLog for Dependency injection
+            NLog.LogManager.Setup().LoadConfigurationFromAppSettings();
+            NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
-    builder.Services.AddFluentValidationAutoValidation();
-    builder.Services.AddValidatorsFromAssemblyContaining<ProductValidator>();
+            try
+            {
+                logger.Debug("init main");
 
+                // Add services to the container.
+                builder.Services.AddControllers();
 
+                builder.Logging.ClearProviders();
+                builder.Logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
+                builder.Host.UseNLog();  // NLog: setup NLog for Dependency injection
 
-    // Customizing the validation error response
-    builder.Services.Configure<ApiBehaviorOptions>(options =>
-    {
-        options.InvalidModelStateResponseFactory = context =>
-        {
-            var errors = context.ModelState
-                .Where(e => e.Value?.Errors.Count > 0)
-                .Select(e => new
+                // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+                builder.Services.AddEndpointsApiExplorer();
+                builder.Services.AddSwaggerGen();
+
+                builder.Services.AddDbContext<AppDbContext>(options =>
+                    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"))
+                    .EnableSensitiveDataLogging().LogTo(message => Debug.WriteLine(message), LogLevel.Information));
+
+                builder.Services.AddHttpClient<IEthBlockService, EthBlockService>();
+
+                // Register Unit of Work and Services (Dependency Injection)
+                builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+                builder.Services.AddScoped<IProductService, ProductService>();
+                builder.Services.AddScoped<IEthBlockService, EthBlockService>();
+                builder.Services.AddScoped<ProductHandler>();
+
+                // Automapper to map the DTOs and Entities
+                builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
+
+                // Read the configuration from appsettings.json
+                builder.Services.AddSingleton<BlockCypherEndPoints>();
+                builder.Services.Configure<BlockCypherEndPoints>(builder.Configuration.GetSection("BlockCypherEndPoints"));
+
+                // Register Healthcheck
+                builder.Services.AddHealthChecks()
+                    .AddCheck("self", () => HealthCheckResult.Healthy());
+
+                // CORS policy
+                builder.Services.AddCors(options =>
                 {
-                    Field = e.Key,
-                    Errors = e.Value?.Errors.Select(x => x.ErrorMessage)
+                    options.AddDefaultPolicy(builder =>
+                        builder.AllowAnyOrigin()
+                               .AllowAnyHeader()
+                               .AllowAnyMethod());
                 });
 
-            return new BadRequestObjectResult(new { Errors = errors });
-        };
-    });
+                builder.Services.AddFluentValidationAutoValidation();
+                builder.Services.AddValidatorsFromAssemblyContaining<ProductValidator>();
 
-    // JSON searialization options
-    builder.Services.AddControllers()
-        .AddNewtonsoftJson(options =>
-        {
-            options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
-            options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-        });
+                // Register Action Filters
+                builder.Services.AddScoped<ApiAuditLogFilter>();
 
-    var app = builder.Build();
+                // Customizing the validation error response
+                builder.Services.Configure<ApiBehaviorOptions>(options =>
+                {
+                    options.InvalidModelStateResponseFactory = context =>
+                    {
+                        var errors = context.ModelState
+                            .Where(e => e.Value?.Errors.Count > 0)
+                            .Select(e => new
+                            {
+                                Field = e.Key,
+                                Errors = e.Value?.Errors.Select(x => x.ErrorMessage)
+                            });
 
-    // Configure the HTTP request pipeline.
-    if (app.Environment.IsDevelopment())
-    {
-        app.UseSwagger();
-        app.UseSwaggerUI();
+                        return new BadRequestObjectResult(new { Errors = errors });
+                    };
+                });
+
+                // JSON searialization options
+                builder.Services.AddControllers(options =>
+                {
+                    options.Filters.Add<ApiAuditLogFilter>();
+                }).AddNewtonsoftJson(options =>
+                {
+                    options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+                    options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                });
+
+
+                var app = builder.Build();
+
+                // Configure the HTTP request pipeline.
+                if (app.Environment.IsDevelopment())
+                {
+                    app.UseSwagger();
+                    app.UseSwaggerUI();
+                }
+
+                app.UseHttpsRedirection();
+                app.UseCors();
+
+                app.UseAuthorization();
+
+                app.MapControllers();
+
+                // Healthcheck endpoint
+                // Map the /health endpoint and return JSON directly
+                app.MapHealthChecks("/health", new HealthCheckOptions
+                {
+                    ResponseWriter = async (context, report) =>
+                    {
+                        context.Response.ContentType = "application/json";
+
+                        var result = new
+                        {
+                            status = report.Status.ToString(),
+                            checks = report.Entries.Select(e => new
+                            {
+                                name = e.Key,
+                                status = e.Value.Status.ToString(),
+                                description = e.Value.Description
+                            }),
+                            timestamp = DateTime.UtcNow
+                        };
+
+                        await context.Response.WriteAsync(JsonSerializer.Serialize(result, new JsonSerializerOptions
+                        {
+                            WriteIndented = true
+                        }));
+                    }
+                });
+
+                app.Run();
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Stopped program because of exception");
+                throw;
+            }
+            finally
+            {
+                NLog.LogManager.Shutdown();
+            }
+
+        }
     }
 
-    app.UseHttpsRedirection();
-    app.UseCors("front_end_cors_policy_port_3000");
-
-    app.UseAuthorization();
-
-    app.MapControllers();
-
-    // Healthcheck endpoint
-    app.MapHealthChecks("/health");
-
-    app.Run();
 }
-catch (Exception ex)
-{
-    logger.Error(ex, "Stopped program because of exception");
-    throw;
-}
-finally
-{
-    NLog.LogManager.Shutdown();
-}
+
 public partial class Program { }

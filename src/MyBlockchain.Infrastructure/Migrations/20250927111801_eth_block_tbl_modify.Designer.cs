@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MyBlockchain.Infrastructure.Data;
 
@@ -10,48 +11,14 @@ using MyBlockchain.Infrastructure.Data;
 namespace MyBlockchain.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250927111801_eth_block_tbl_modify")]
+    partial class eth_block_tbl_modify
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.20");
-
-            modelBuilder.Entity("MyBlockchain.Domain.Entities.ApiAuditLog", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("HttpMethod")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Path")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("QueryString")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("RequestBody")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("RequestDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("ResponseDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("StatusCode")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ApiAudits", (string)null);
-                });
 
             modelBuilder.Entity("MyBlockchain.Domain.Entities.EthBlock", b =>
                 {

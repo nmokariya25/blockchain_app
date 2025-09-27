@@ -12,6 +12,7 @@ namespace MyBlockchain.Infrastructure.UnitOfWork
     public interface IUnitOfWork : IDisposable
     {
         IGenericRepository<Product> Products { get; }
+        IGenericRepository<EthBlock> EthBlocks { get; }
 
         IProductRepository ProductRepository { get; }
 
