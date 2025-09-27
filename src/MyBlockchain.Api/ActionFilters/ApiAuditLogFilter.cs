@@ -7,9 +7,9 @@ namespace MyBlockchain.Api.ActionFilters
 {
     public class ApiAuditLogFilter : IAsyncActionFilter
     {
-        private readonly AppDbContext _dbContext;
+        private readonly BlockCypherDbContext _dbContext;
 
-        public ApiAuditLogFilter(AppDbContext dbContext)
+        public ApiAuditLogFilter(BlockCypherDbContext dbContext)
         {
             _dbContext = dbContext;
         }

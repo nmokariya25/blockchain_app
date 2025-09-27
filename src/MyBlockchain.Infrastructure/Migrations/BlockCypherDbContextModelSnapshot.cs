@@ -9,8 +9,8 @@ using MyBlockchain.Infrastructure.Data;
 
 namespace MyBlockchain.Infrastructure.Migrations
 {
-    [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(BlockCypherDbContext))]
+    partial class BlockCypherDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
@@ -120,25 +120,6 @@ namespace MyBlockchain.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("EthBlocks", (string)null);
-                });
-
-            modelBuilder.Entity("MyBlockchain.Domain.Entities.Product", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Products");
                 });
 #pragma warning restore 612, 618
         }

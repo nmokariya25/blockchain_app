@@ -1,7 +1,6 @@
 ﻿using MyBlockchain.Domain.Entities;
 using MyBlockchain.Infrastructure.Data;
 using MyBlockchain.Infrastructure.Repositories;
-using MyBlockchain.Infrastructure.Repositories.Product;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,18 +11,14 @@ namespace MyBlockchain.Infrastructure.UnitOfWork
 {
     public class UnitOfWork : IUnitOfWork
     {
-        private readonly AppDbContext _context;
-
-        public IGenericRepository<Product> Products { get; }
+        private readonly BlockCypherDbContext _context;
+        
         public IGenericRepository<EthBlock> EthBlocks { get; }
-        public IProductRepository ProductRepository { get; }
 
-        public UnitOfWork(AppDbContext context)
+        public UnitOfWork(BlockCypherDbContext context)
         {
             _context = context;
-            Products = new GenericRepository<Product>(_context);
             EthBlocks = new GenericRepository<EthBlock>(_context);
-            ProductRepository = new ProductRepository(_context);
         }
 
         public async Task<int> CompleteAsync()
