@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using MyBlockchain.Api.ActionFilters;
 using MyBlockchain.Api.Handlers;
 using MyBlockchain.Api.Validators;
 using MyBlockchain.Application.AutoMappers;
@@ -24,7 +25,7 @@ using JsonSerializer = System.Text.Json.JsonSerializer;
 namespace MyBlockchain.Api
 {
     public class Program
-    {   
+    {
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
@@ -33,7 +34,7 @@ namespace MyBlockchain.Api
             NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
             try
-            {   
+            {
                 logger.Debug("init main");
 
                 // Add services to the container.
@@ -69,7 +70,7 @@ namespace MyBlockchain.Api
                 // Register Healthcheck
                 builder.Services.AddHealthChecks()
                     .AddCheck("self", () => HealthCheckResult.Healthy());
-                
+
                 // CORS policy
                 builder.Services.AddCors(options =>
                 {
@@ -82,7 +83,8 @@ namespace MyBlockchain.Api
                 builder.Services.AddFluentValidationAutoValidation();
                 builder.Services.AddValidatorsFromAssemblyContaining<ProductValidator>();
 
-
+                // Register Action Filters
+                builder.Services.AddScoped<ApiAuditLogFilter>();
 
                 // Customizing the validation error response
                 builder.Services.Configure<ApiBehaviorOptions>(options =>
@@ -102,12 +104,15 @@ namespace MyBlockchain.Api
                 });
 
                 // JSON searialization options
-                builder.Services.AddControllers()
-                    .AddNewtonsoftJson(options =>
-                    {
-                        options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
-                        options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-                    });
+                builder.Services.AddControllers(options =>
+                {
+                    options.Filters.Add<ApiAuditLogFilter>();
+                }).AddNewtonsoftJson(options =>
+                {
+                    options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+                    options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                });
+
 
                 var app = builder.Build();
 
