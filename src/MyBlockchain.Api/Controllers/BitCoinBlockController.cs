@@ -11,23 +11,18 @@ namespace MyBlockchain.Api.Controllers
     public class BitCoinBlockController : ControllerBase
     {
         private readonly IBitCoinBlockService _bitCoinBlockService;
-        private readonly IMapper _mapper;
-
+        
         public BitCoinBlockController(
             IBitCoinBlockService BitCoinBlockService,
             IMapper mapper)
         {
             this._bitCoinBlockService = BitCoinBlockService;
-            this._mapper = mapper;
         }
 
         [HttpPost("fetch")]
         public async Task<IActionResult> SaveLatestBlock()
         {
-            var dto = await _bitCoinBlockService.GetLatestBlockAsync();
-            if (dto == null) return NotFound("No data received from API.");
-            var entity = _mapper.Map<BitCoinBlock>(dto);
-            await _bitCoinBlockService.AddAsync(entity);
+            var entity = await _bitCoinBlockService.FetchAndSaveAsync();
             return Ok(new { message = "Block data saved successfully", blockHeight = entity.Height });
         }
 
