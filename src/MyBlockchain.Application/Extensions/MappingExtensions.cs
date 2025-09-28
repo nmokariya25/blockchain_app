@@ -4,7 +4,7 @@ namespace MyBlockchain.Application.Extensions
 {
     public static class MappingExtensions
     {
-        public static TEntity ToEntity<TEntity, TDto>(this TDto dto)
+        public static TEntity ToEntity<TEntity, TDto>(TDto dto)
         where TEntity : class, new()
         where TDto : class
         {

@@ -17,8 +17,8 @@ namespace MyBlockchain.Api.Controllers
             IBtcBlockService btcBlockService, 
             ILogger<BtcBlockController> logger)
         {
-            this._btcBlockService = btcBlockService;
-            this._logger = logger;
+            _btcBlockService = btcBlockService;
+            _logger = logger;
         }
 
         [HttpPost("fetch")]

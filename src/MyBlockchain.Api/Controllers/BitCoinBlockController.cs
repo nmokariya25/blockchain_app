@@ -11,12 +11,14 @@ namespace MyBlockchain.Api.Controllers
     public class BitCoinBlockController : ControllerBase
     {
         private readonly IBitCoinBlockService _bitCoinBlockService;
-        
+        private readonly ILogger<BitCoinBlockController> _logger;
+
         public BitCoinBlockController(
             IBitCoinBlockService BitCoinBlockService,
-            IMapper mapper)
+            ILogger<BitCoinBlockController> logger)
         {
-            this._bitCoinBlockService = BitCoinBlockService;
+            _bitCoinBlockService = BitCoinBlockService;
+            _logger = logger;
         }
 
         [HttpPost("fetch")]
@@ -29,13 +31,14 @@ namespace MyBlockchain.Api.Controllers
         [HttpGet("history/{count?}")]
         public async Task<IActionResult> GetLatestBlock(int count = 0)
         {
-            var latestBlock = await _bitCoinBlockService.GetAllAsync();
-            var blockHistory = (count > 0)
-                ? latestBlock.OrderByDescending(b => b.CreatedAt).Take(count)
-                : latestBlock.OrderByDescending(b => b.CreatedAt);
-            if (!blockHistory.Any())
-                return NotFound("No block data found.");
-            return Ok(blockHistory);
+            var latestBlock = await _bitCoinBlockService.FetchAllLatestAsync(count);
+
+            if (!latestBlock.Any())
+            {
+                _logger.LogInformation("No block data found in the database.");
+                return NoContent();
+            }
+            return Ok(latestBlock);
         }
     }
 }

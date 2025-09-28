@@ -15,7 +15,7 @@ namespace MyBlockchain.Application.Services
 
         public ApiAuditService(IUnitOfWork unitOfWork)
         {
-            this._unitOfWork = unitOfWork;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<ApiAuditLog> AddAsync(ApiAuditLog apiAuditLog)

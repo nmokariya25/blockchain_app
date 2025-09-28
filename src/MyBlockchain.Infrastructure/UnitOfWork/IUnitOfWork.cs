@@ -22,6 +22,7 @@ namespace MyBlockchain.Infrastructure.UnitOfWork
         IDashBlockRepository DashBlockRepository { get; }
         IBitCoinBlockRepository BitCoinBlockRepository { get; }
         IBtcBlockRepository BtcBlockRepository { get; }
+        IEthBlockRepository EthBlockRepository { get; }
 
         Task<int> CompleteAsync();
     }

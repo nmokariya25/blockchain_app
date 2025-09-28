@@ -17,8 +17,8 @@ namespace MyBlockchain.Api.Controllers
             ILtcBlockService ltcBlockService,
             IMapper mapper)
         {
-            this._ltcBlockService = ltcBlockService;
-            this._mapper = mapper;
+            _ltcBlockService = ltcBlockService;
+            _mapper = mapper;
         }
 
         [HttpPost("fetch")]
