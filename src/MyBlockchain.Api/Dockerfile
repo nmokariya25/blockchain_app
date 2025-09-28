@@ -15,7 +15,7 @@ WORKDIR "/src/MyBlockchain.Api"
 RUN dotnet publish "MyBlockchain.Api.csproj" -c Release -o /app/publish
 
 # ------------- RUNTIME STAGE -------------
-FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS runtime
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
 
 # Copy published output from build stage
