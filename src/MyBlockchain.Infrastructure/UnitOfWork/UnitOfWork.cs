@@ -23,7 +23,7 @@ namespace MyBlockchain.Infrastructure.UnitOfWork
 
         // Custom Repository
         public IDashBlockRepository DashBlockRepository { get; }
-
+        public IBitCoinBlockRepository BitCoinBlockRepository { get; }
         public UnitOfWork(BlockCypherDbContext context)
         {
             _context = context;
@@ -34,6 +34,7 @@ namespace MyBlockchain.Infrastructure.UnitOfWork
             BitCoinBlocks = new GenericRepository<BitCoinBlock>(_context);
             ApiAuditLogs = new GenericRepository<ApiAuditLog>(_context);
             DashBlockRepository = new DashBlockRepository(_context);
+            BitCoinBlockRepository = new BitCoinBlockRepository(_context);
         }
 
         public async Task<int> CompleteAsync()

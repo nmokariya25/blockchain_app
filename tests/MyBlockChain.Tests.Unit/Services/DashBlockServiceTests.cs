@@ -1,6 +1,8 @@
-﻿using Castle.Core.Logging;
+﻿using AutoMapper;
+using Castle.Core.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
+using MyBlockchain.Application.AutoMappers;
 using MyBlockchain.Application.Models;
 using MyBlockchain.Application.Services;
 using MyBlockchain.Domain.Entities;
@@ -23,9 +25,15 @@ namespace MyBlockChain.Tests.Unit.Services
         private readonly Mock<IHttpClientFactory> _mockHttpClientFactory;
         private readonly Mock<IOptions<BlockCypherEndPoints>> _mockOptions;
         private readonly IDashBlockRepository _mockDashRepo;
-        
+        private readonly IMapper _mapper;
+
         public DashBlockServiceTests()
         {
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile<MappingProfile>();
+            });
+
             _mockUow = new Mock<IUnitOfWork>();
             _mockRepo = new Mock<IGenericRepository<DashBlock>>();
             _mockDashRepo = new Mock<IDashBlockRepository>().Object;
@@ -40,7 +48,8 @@ namespace MyBlockChain.Tests.Unit.Services
                 _mockOptions.Object,
                 _mockUow.Object,
                 _mockDashRepo,
-                new FakeLogger<DashBlockService>()
+                new FakeLogger<DashBlockService>(),
+                _mapper = config.CreateMapper()
             );
         }
 

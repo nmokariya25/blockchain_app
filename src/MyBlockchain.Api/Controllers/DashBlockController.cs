@@ -9,30 +9,21 @@ namespace MyBlockchain.Api.Controllers
     [Route("api/[controller]")]
     public class DashBlockController : ControllerBase
     {
-        private readonly ILogger<DashBlockController> _logger; 
+        private readonly ILogger<DashBlockController> _logger;
         private readonly IDashBlockService _dashBlockService;
-        private readonly IMapper _mapper;
 
         public DashBlockController(
             IDashBlockService dashBlockService,
-            IMapper mapper,
             ILogger<DashBlockController> logger)
         {
             this._dashBlockService = dashBlockService;
-            this._mapper = mapper;
             _logger = logger;
         }
 
         [HttpPost("fetch")]
         public async Task<IActionResult> SaveLatestBlock()
         {
-            _logger.LogInformation("Controller called..!!");
-            var dto = await _dashBlockService.GetLatestBlockAsync();
-            if (dto == null) return NotFound("No data received from API.");
-
-            var entity = _mapper.Map<DashBlock>(dto);
-            await _dashBlockService.AddAsync(entity);
-
+            var entity = await _dashBlockService.FetchAndSaveAsync();
             return Ok(new { message = "Block data saved successfully", blockHeight = entity.Height });
         }
 
@@ -41,20 +32,19 @@ namespace MyBlockchain.Api.Controllers
         {
             var latestBlock = await _dashBlockService.FetchAllLatestAsync(count);
 
-            var blockHistory = (count > 0)
-                ? latestBlock.OrderByDescending(b => b.CreatedAt).Take(count)
-                : latestBlock.OrderByDescending(b => b.CreatedAt);
-
-            if (!blockHistory.Any())
-                return NotFound("No block data found.");
-
-            return Ok(blockHistory);
+            if (!latestBlock.Any())
+            {
+                _logger.LogInformation("No block data found in the database.");
+                return NoContent();
+            }
+            return Ok(latestBlock);
         }
 
 
         // Common Methods if required 
         // CRUD operations with GetAll 
         [HttpGet]
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> GetAll()
         {
             var dashBlocks = await _dashBlockService.GetAllAsync();
@@ -62,6 +52,7 @@ namespace MyBlockchain.Api.Controllers
         }
 
         [HttpGet("{id}")]
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> GetById(int id)
         {
             var dashBlock = await _dashBlockService.GetByIdAsync(id);
@@ -70,6 +61,7 @@ namespace MyBlockchain.Api.Controllers
         }
 
         [HttpPost]
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> Create(DashBlock dashBlock)
         {
             var created = await _dashBlockService.AddAsync(dashBlock);
@@ -77,6 +69,7 @@ namespace MyBlockchain.Api.Controllers
         }
 
         [HttpPut("{id}")]
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> Update(int id, DashBlock dashBlock)
         {
             if (id != dashBlock.Id) return BadRequest();
@@ -93,6 +86,7 @@ namespace MyBlockchain.Api.Controllers
         }
 
         [HttpDelete("{id}")]
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> Delete(int id)
         {
             try
@@ -105,8 +99,5 @@ namespace MyBlockchain.Api.Controllers
             }
             return NoContent();
         }
-
-
-        // CRUD Operations completed
     }
 }

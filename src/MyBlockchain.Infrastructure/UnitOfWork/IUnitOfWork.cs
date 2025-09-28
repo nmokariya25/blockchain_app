@@ -20,6 +20,7 @@ namespace MyBlockchain.Infrastructure.UnitOfWork
 
         //Custom Repositories
         IDashBlockRepository DashBlockRepository { get; }
+        IBitCoinBlockRepository BitCoinBlockRepository { get; }
 
         Task<int> CompleteAsync();
     }
