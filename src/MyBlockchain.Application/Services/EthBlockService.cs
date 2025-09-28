@@ -27,7 +27,7 @@ namespace MyBlockchain.Application.Services
         private readonly IMapper _mapper;
 
         public EthBlockService(
-            IHttpClientFactory httpClientFactory, 
+            IHttpClientFactory httpClientFactory,
             IOptions<BlockCypherEndPoints> blockCypherEndPoints,
             IUnitOfWork unitOfWork,
             ILogger<EthBlockService> logger,
@@ -78,14 +78,16 @@ namespace MyBlockchain.Application.Services
         {
             try
             {
-                var ethBlockClient = _httpClientFactory.CreateClient("EthBlockClient");
-                var url = _blockCypherEndPoints.EthBlock;
-                var response = await ethBlockClient.GetFromJsonAsync<EthBlockDto>(url);
-                if (response == null)
-                    throw new HttpRequestException();
+                using (var ethBlockClient = _httpClientFactory.CreateClient("EthBlockClient"))
+                {
+                    var url = _blockCypherEndPoints.EthBlock;
+                    var response = await ethBlockClient.GetFromJsonAsync<EthBlockDto>(url);
+                    if (response == null)
+                        throw new HttpRequestException();
 
-                var objDashBlock = _mapper.Map<EthBlock>(response);
-                return await AddAsync(objDashBlock);
+                    var objDashBlock = _mapper.Map<EthBlock>(response);
+                    return await AddAsync(objDashBlock);
+                }
             }
             catch (HttpRequestException ex)
             {

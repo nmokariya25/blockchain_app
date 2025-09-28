@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Moq;
 using MyBlockchain.Application.AutoMappers;
@@ -90,9 +91,17 @@ namespace MyBlockChain.Tests.Unit.Services
         [Fact]
         public async Task EthBlockApi_ShouldReturnStatus200()
         {
-            var ethBlockApiUrl = "https://api.blockcypher.com/v1/eth/main";
-            var response = await new HttpClient().GetAsync(ethBlockApiUrl);
-            Assert.Equal(System.Net.HttpStatusCode.OK, response.StatusCode);
+            var services = new ServiceCollection();
+            services.AddHttpClient();
+            var serviceProvider = services.BuildServiceProvider();
+            var httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
+
+            using (var ethBlockClient = httpClientFactory.CreateClient("EthBlockClientTest"))
+            {
+                var ethBlockApiUrl = "https://api.blockcypher.com/v1/eth/main";
+                var response = await ethBlockClient.GetAsync(ethBlockApiUrl);
+                Assert.Equal(System.Net.HttpStatusCode.OK, response.StatusCode);
+            }
         }
     }
 }

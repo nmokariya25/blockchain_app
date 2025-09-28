@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Moq;
 using MyBlockchain.Application.AutoMappers;
@@ -81,9 +82,16 @@ namespace MyBlockChain.Tests.Unit.Services
         [Fact]
         public async Task BitCoinBlockApi_ShouldReturnStatus200()
         {
-            var bitCoinBlockApiUrl = "https://api.blockcypher.com/v1/btc/test3";
-            var response = await new HttpClient().GetAsync(bitCoinBlockApiUrl);
-            Assert.Equal(System.Net.HttpStatusCode.OK, response.StatusCode);
+            var services = new ServiceCollection();
+            services.AddHttpClient();
+            var serviceProvider = services.BuildServiceProvider();
+            var httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
+            using(var bitCointBlockClient = httpClientFactory.CreateClient("BitCoinBlockClientTest"))
+            {
+                var bitCoinBlockApiUrl = "https://api.blockcypher.com/v1/btc/test3";
+                var response = await new HttpClient().GetAsync(bitCoinBlockApiUrl);
+                Assert.Equal(System.Net.HttpStatusCode.OK, response.StatusCode);
+            }
         }
     }
 }

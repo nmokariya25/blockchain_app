@@ -79,25 +79,17 @@ namespace MyBlockchain.Application.Services
             await _unitOfWork.CompleteAsync();
         }
 
-        public async Task<DashBlockDto> GetDashBlockDataAsync()
-        {
-            using (var dashBlockClient = _httpClientFactory.CreateClient("DashBlockClient"))
-            {
-                var url = _blockCypherEndPoints.DashBlock;
-                var dashBlock = await dashBlockClient.GetFromJsonAsync<DashBlockDto>(url);
-                if (dashBlock == null)
-                    throw new HttpRequestException("Failed to retrieve DashBlockDto from API.");
-                return dashBlock;
-            }
-        }
-
         public async Task<DashBlock> FetchAndSaveAsync()
         {
             try
             {
-                var response = await GetDashBlockDataAsync();
-                var objDashBlock = _mapper.Map<DashBlock>(response);
-                return await AddAsync(objDashBlock);
+                using (var dashBlockClient = _httpClientFactory.CreateClient("DashBlockClient"))
+                {
+                    var url = _blockCypherEndPoints.DashBlock;
+                    var response = await dashBlockClient.GetFromJsonAsync<DashBlockDto>(url);
+                    var objDashBlock = _mapper.Map<DashBlock>(response);
+                    return await AddAsync(objDashBlock);
+                }
             }
             catch (HttpRequestException ex)
             {

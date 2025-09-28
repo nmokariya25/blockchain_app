@@ -76,14 +76,16 @@ namespace MyBlockchain.Application.Services
         {
             try
             {
-                var ltcBlockClient = _httpClientFactory.CreateClient("LtcBlockClient");
-                var url = _blockCypherEndPoints.EthBlock;
-                var response = await ltcBlockClient.GetFromJsonAsync<LtcBlockDto>(url);
-                if (response == null)
-                    throw new HttpRequestException();
+                using (var ltcBlockClient = _httpClientFactory.CreateClient("LtcBlockClient"))
+                {
+                    var url = _blockCypherEndPoints.EthBlock;
+                    var response = await ltcBlockClient.GetFromJsonAsync<LtcBlockDto>(url);
+                    if (response == null)
+                        throw new HttpRequestException();
 
-                var obcLtcBlock = _mapper.Map<LtcBlock>(response);
-                return await AddAsync(obcLtcBlock);
+                    var obcLtcBlock = _mapper.Map<LtcBlock>(response);
+                    return await AddAsync(obcLtcBlock);
+                }
             }
             catch (HttpRequestException ex)
             {
