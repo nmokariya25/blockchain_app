@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Castle.Core.Logging;
+using Microsoft.Extensions.Options;
 using Moq;
 using MyBlockchain.Application.Models;
 using MyBlockchain.Application.Services;
@@ -22,7 +23,7 @@ namespace MyBlockChain.Tests.Unit.Services
         private readonly Mock<IHttpClientFactory> _mockHttpClientFactory;
         private readonly Mock<IOptions<BlockCypherEndPoints>> _mockOptions;
         private readonly IDashBlockRepository _mockDashRepo;
-
+        
         public DashBlockServiceTests()
         {
             _mockUow = new Mock<IUnitOfWork>();
@@ -38,7 +39,8 @@ namespace MyBlockChain.Tests.Unit.Services
                 _mockHttpClientFactory.Object,
                 _mockOptions.Object,
                 _mockUow.Object,
-                _mockDashRepo
+                _mockDashRepo,
+                new FakeLogger<DashBlockService>()
             );
         }
 
