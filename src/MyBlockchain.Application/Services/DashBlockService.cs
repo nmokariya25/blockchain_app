@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using MyBlockchain.Application.DTOs;
 using MyBlockchain.Application.Interfaces;
 using MyBlockchain.Application.Models;
@@ -20,17 +21,20 @@ namespace MyBlockchain.Application.Services
         private readonly BlockCypherEndPoints _blockCypherEndPoints;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IDashBlockRepository _dashBlockRepository;
-
+        private readonly ILogger<DashBlockService> _logger;
+             
         public DashBlockService(
             IHttpClientFactory httpClientFactory,
             IOptions<BlockCypherEndPoints> blockCypherEndPoints,
             IUnitOfWork unitOfWork,
-            IDashBlockRepository dashBlockRepository)
+            IDashBlockRepository dashBlockRepository,
+            ILogger<DashBlockService> logger)
         {
             _httpClientFactory = httpClientFactory;
             _blockCypherEndPoints = blockCypherEndPoints.Value;
             _unitOfWork = unitOfWork;
             _dashBlockRepository = dashBlockRepository;
+            _logger = logger;
         }
 
         public async Task<IEnumerable<DashBlock>> GetAllAsync()
@@ -70,6 +74,7 @@ namespace MyBlockchain.Application.Services
 
         public async Task<DashBlockDto> GetLatestBlockAsync()
         {
+            _logger.LogInformation("service layer called...!!");
             var DashBlockClient = _httpClientFactory.CreateClient("DashBlockClient");
             var url = _blockCypherEndPoints.DashBlock;
             var response = await DashBlockClient.GetFromJsonAsync<DashBlockDto>(url);

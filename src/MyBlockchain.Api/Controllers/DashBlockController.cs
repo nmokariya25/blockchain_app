@@ -9,20 +9,24 @@ namespace MyBlockchain.Api.Controllers
     [Route("api/[controller]")]
     public class DashBlockController : ControllerBase
     {
+        private readonly ILogger<DashBlockController> _logger; 
         private readonly IDashBlockService _dashBlockService;
         private readonly IMapper _mapper;
 
         public DashBlockController(
             IDashBlockService dashBlockService,
-            IMapper mapper)
+            IMapper mapper,
+            ILogger<DashBlockController> logger)
         {
             this._dashBlockService = dashBlockService;
             this._mapper = mapper;
+            _logger = logger;
         }
 
         [HttpPost("fetch")]
         public async Task<IActionResult> SaveLatestBlock()
         {
+            _logger.LogInformation("Controller called..!!");
             var dto = await _dashBlockService.GetLatestBlockAsync();
             if (dto == null) return NotFound("No data received from API.");
 
