@@ -1,9 +1,12 @@
-﻿using Microsoft.Extensions.Options;
+﻿using AutoMapper;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using MyBlockchain.Application.DTOs;
 using MyBlockchain.Application.Interfaces;
 using MyBlockchain.Application.Models;
 using MyBlockchain.Domain.Entities;
 using MyBlockchain.Infrastructure.UnitOfWork;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,14 +21,21 @@ namespace MyBlockchain.Application.Services
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly BlockCypherEndPoints _blockCypherEndPoints;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ILogger<BtcBlockService> _logger;
+        private readonly IMapper _mapper;
 
-        public BtcBlockService(IHttpClientFactory httpClientFactory,
+        public BtcBlockService(
+            IHttpClientFactory httpClientFactory,
             IOptions<BlockCypherEndPoints> blockCypherEndPoints,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            ILogger<BtcBlockService> logger,
+            IMapper mapper)
         {
             _httpClientFactory = httpClientFactory;
             _blockCypherEndPoints = blockCypherEndPoints.Value;
             _unitOfWork = unitOfWork;
+            _logger = logger;
+            _mapper = mapper;
         }
 
         public async Task<IEnumerable<BtcBlock>> GetAllAsync()
@@ -62,15 +72,35 @@ namespace MyBlockchain.Application.Services
             await _unitOfWork.CompleteAsync();
         }
 
-
-        public async Task<BtcBlockDto> GetLatestBlockAsync()
+        public async Task<BtcBlock> FetchAndSaveAsync()
         {
-            var BtcBlockClient = _httpClientFactory.CreateClient("BtcBlockClient");
-            var url = _blockCypherEndPoints.BtcBlock;
-            var response = await BtcBlockClient.GetFromJsonAsync<BtcBlockDto>(url);
-            if (response is null)
-                throw new InvalidOperationException("Failed to retrieve the latest Ethereum block.");
-            return response;
+            try
+            {
+                var btcBlockClient = _httpClientFactory.CreateClient("BtcBlockClient");
+                var url = _blockCypherEndPoints.BtcBlock;
+                var response = await btcBlockClient.GetFromJsonAsync<BtcBlockDto>(url);
+                if (response == null)
+                    throw new HttpRequestException();
+
+                var objBtcBlock = _mapper.Map<BtcBlock>(response);
+                return await AddAsync(objBtcBlock);
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError($"There is some issue while retriving the data from Api. Detailed Exception is: {JsonConvert.SerializeObject(ex)}");
+                throw new HttpRequestException("Failed to retrive the data from Api");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"There is some issue while saving the records. Exception is: {JsonConvert.SerializeObject(ex)}");
+                throw new Exception("Failed to save the latest Dashblock.");
+            }
+        }
+
+        public async Task<IEnumerable<BtcBlock>> FetchAllLatestAsync(int count = 0)
+        {
+            var latestBlocks = await _unitOfWork.BtcBlockRepository.FetchAllLatestAsync(count);
+            return latestBlocks;
         }
     }
 }

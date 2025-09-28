@@ -15,7 +15,8 @@ namespace MyBlockchain.Application.Interfaces
         Task<BtcBlock> AddAsync(BtcBlock btcBlock);
         Task UpdateAsync(BtcBlock btcBlock);
         Task DeleteAsync(int id);
-        Task<BtcBlockDto> GetLatestBlockAsync();
+        Task<BtcBlock> FetchAndSaveAsync();
+        Task<IEnumerable<BtcBlock>> FetchAllLatestAsync(int count = 0);
     }
 
 }

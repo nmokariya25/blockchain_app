@@ -11,41 +11,34 @@ namespace MyBlockchain.Api.Controllers
     public class BtcBlockController : ControllerBase
     {
         private readonly IBtcBlockService _btcBlockService;
-        private readonly IMapper _mapper;
+        private readonly ILogger<BtcBlockController> _logger;
 
         public BtcBlockController(
             IBtcBlockService btcBlockService, 
-            IMapper mapper)
+            ILogger<BtcBlockController> logger)
         {
             this._btcBlockService = btcBlockService;
-            this._mapper = mapper;
+            this._logger = logger;
         }
 
         [HttpPost("fetch")]
         public async Task<IActionResult> SaveLatestBlock()
         {
-            var dto = await _btcBlockService.GetLatestBlockAsync();
-            if (dto == null) return NotFound("No data received from API.");
-
-            var entity = _mapper.Map<BtcBlock>(dto);
-            await _btcBlockService.AddAsync(entity);
-
+            var entity = await _btcBlockService.FetchAndSaveAsync();
             return Ok(new { message = "Block data saved successfully", blockHeight = entity.Height });
         }
 
         [HttpGet("history/{count?}")]
         public async Task<IActionResult> GetLatestBlock(int count = 0)
         {
-            var latestBlock = await _btcBlockService.GetAllAsync();
+            var latestBlock = await _btcBlockService.FetchAllLatestAsync(count);
 
-            var blockHistory = (count > 0)
-                ? latestBlock.OrderByDescending(b => b.CreatedAt).Take(count)
-                : latestBlock.OrderByDescending(b => b.CreatedAt);
-
-            if (!blockHistory.Any())
-                return NotFound("No block data found.");
-
-            return Ok(blockHistory);
+            if (!latestBlock.Any())
+            {
+                _logger.LogInformation("No block data found in the database.");
+                return NoContent();
+            }
+            return Ok(latestBlock);
         }
     }
 }
