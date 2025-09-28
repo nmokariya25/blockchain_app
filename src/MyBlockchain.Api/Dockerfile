@@ -25,6 +25,6 @@ COPY --from=build /app/publish .
 ENV ASPNETCORE_URLS="http://+:80"
 # (If your app expects other environment variables, set them here or via docker-compose)
 
-EXPOSE 80
+EXPOSE 8080
 
 ENTRYPOINT ["dotnet", "MyBlockchain.Api.dll"]
