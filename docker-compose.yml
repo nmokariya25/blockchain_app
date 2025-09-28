@@ -6,7 +6,7 @@ services:
       context: ./src/MyBlockchain.Api
       dockerfile: Dockerfile
     ports:
-      - "5000:80"
+      - "5000:5000"
     networks:
       - backend
 

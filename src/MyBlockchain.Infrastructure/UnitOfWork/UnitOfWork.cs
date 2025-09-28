@@ -13,7 +13,7 @@ namespace MyBlockchain.Infrastructure.UnitOfWork
     public class UnitOfWork : IUnitOfWork
     {
         private readonly BlockCypherDbContext _context;
-        
+
         public IGenericRepository<EthBlock> EthBlocks { get; }
         public IGenericRepository<DashBlock> DashBlocks { get; }
         public IGenericRepository<BtcBlock> BtcBlocks { get; }
@@ -24,6 +24,10 @@ namespace MyBlockchain.Infrastructure.UnitOfWork
         // Custom Repository
         public IDashBlockRepository DashBlockRepository { get; }
         public IBitCoinBlockRepository BitCoinBlockRepository { get; }
+        public IBtcBlockRepository BtcBlockRepository { get; }
+        public IEthBlockRepository EthBlockRepository { get; }
+        public ILtcBlockRepository LtcBlockRepository { get; }
+
         public UnitOfWork(BlockCypherDbContext context)
         {
             _context = context;
@@ -35,6 +39,9 @@ namespace MyBlockchain.Infrastructure.UnitOfWork
             ApiAuditLogs = new GenericRepository<ApiAuditLog>(_context);
             DashBlockRepository = new DashBlockRepository(_context);
             BitCoinBlockRepository = new BitCoinBlockRepository(_context);
+            BtcBlockRepository = new BtcBlockRepository(_context);
+            EthBlockRepository = new EthBlockRepository(_context);
+            LtcBlockRepository = new LtcBlockRepository(_context);
         }
 
         public async Task<int> CompleteAsync()

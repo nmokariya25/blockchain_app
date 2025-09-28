@@ -1,5 +1,7 @@
-﻿using Microsoft.Extensions.Options;
+﻿using AutoMapper;
+using Microsoft.Extensions.Options;
 using Moq;
+using MyBlockchain.Application.AutoMappers;
 using MyBlockchain.Application.Interfaces;
 using MyBlockchain.Application.Models;
 using MyBlockchain.Application.Services;
@@ -23,11 +25,18 @@ namespace MyBlockChain.Tests.Unit.Services
         private readonly Mock<IGenericRepository<EthBlock>> _mockRepo;
         private readonly Mock<IHttpClientFactory> _mockHttpClientFactory;
         private readonly Mock<IOptions<BlockCypherEndPoints>> _mockOptions;
+        private readonly IEthBlockRepository _mockEthBlockRepo;
+        private readonly IMapper _mapper;
 
         public EthBlockServiceTests()
         {
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile<MappingProfile>();
+            });
             _mockUow = new Mock<IUnitOfWork>();
             _mockRepo = new Mock<IGenericRepository<EthBlock>>();
+            _mockEthBlockRepo = new Mock<IEthBlockRepository>().Object;
             _mockUow.Setup(u => u.EthBlocks).Returns(_mockRepo.Object);
 
             _mockHttpClientFactory = new Mock<IHttpClientFactory>();
@@ -37,7 +46,9 @@ namespace MyBlockChain.Tests.Unit.Services
             _ethBlockService = new EthBlockService(
                 _mockHttpClientFactory.Object,
                 _mockOptions.Object,
-                _mockUow.Object
+                _mockUow.Object,
+                new FakeLogger<EthBlockService>(),
+                _mapper = config.CreateMapper()
             );
         }
 

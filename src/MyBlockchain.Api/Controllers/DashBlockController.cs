@@ -16,7 +16,7 @@ namespace MyBlockchain.Api.Controllers
             IDashBlockService dashBlockService,
             ILogger<DashBlockController> logger)
         {
-            this._dashBlockService = dashBlockService;
+            _dashBlockService = dashBlockService;
             _logger = logger;
         }
 

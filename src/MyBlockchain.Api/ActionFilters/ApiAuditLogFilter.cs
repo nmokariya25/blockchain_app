@@ -12,7 +12,7 @@ namespace MyBlockchain.Api.ActionFilters
 
         public ApiAuditLogFilter(IApiAuditService apiAuditService)
         {
-            this._apiAuditService = apiAuditService;
+            _apiAuditService = apiAuditService;
         }
 
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)

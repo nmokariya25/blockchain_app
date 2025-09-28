@@ -1,5 +1,7 @@
-﻿using Microsoft.Extensions.Options;
+﻿using AutoMapper;
+using Microsoft.Extensions.Options;
 using Moq;
+using MyBlockchain.Application.AutoMappers;
 using MyBlockchain.Application.Models;
 using MyBlockchain.Application.Services;
 using MyBlockchain.Domain.Entities;
@@ -21,9 +23,15 @@ namespace MyBlockChain.Tests.Unit.Services
         private readonly Mock<IGenericRepository<LtcBlock>> _mockRepo;
         private readonly Mock<IHttpClientFactory> _mockHttpClientFactory;
         private readonly Mock<IOptions<BlockCypherEndPoints>> _mockOptions;
+        private readonly ILtcBlockRepository _mockLtcBlockRepo;
+        private readonly IMapper _mapper;
 
         public LtcBlockServiceTests()
         {
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile<MappingProfile>();
+            });
             _mockUow = new Mock<IUnitOfWork>();
             _mockRepo = new Mock<IGenericRepository<LtcBlock>>();
             _mockUow.Setup(u => u.LtcBlocks).Returns(_mockRepo.Object);
@@ -35,7 +43,9 @@ namespace MyBlockChain.Tests.Unit.Services
             _ltcBlockService = new LtcBlockService(
                 _mockHttpClientFactory.Object,
                 _mockOptions.Object,
-                _mockUow.Object
+                _mockUow.Object,
+                new FakeLogger<LtcBlockService>(),
+                _mapper = config.CreateMapper()
             );
         }
 

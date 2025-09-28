@@ -15,6 +15,7 @@ namespace MyBlockchain.Application.Interfaces
         Task<EthBlock> AddAsync(EthBlock ethBlock);
         Task UpdateAsync(EthBlock ethBlock);
         Task DeleteAsync(int id);
-        Task<EthBlockDto> GetLatestBlockAsync();
+        Task<EthBlock> FetchAndSaveAsync();
+        Task<IEnumerable<EthBlock>> FetchAllLatestAsync(int count = 0);
     }
 }
