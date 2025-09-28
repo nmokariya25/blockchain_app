@@ -76,14 +76,16 @@ namespace MyBlockchain.Application.Services
         {
             try
             {
-                var bitCoinBlockClient = _httpClientFactory.CreateClient("BitCoinBlockClient");
-                var url = _blockCypherEndPoints.BitCoinBlock;
-                var response = await bitCoinBlockClient.GetFromJsonAsync<BitCoinBlockDto>(url);
-                if (response == null)
-                    throw new HttpRequestException();
+                using (var bitCoinBlockClient = _httpClientFactory.CreateClient("BitCoinBlockClient"))
+                {
+                    var url = _blockCypherEndPoints.BitCoinBlock;
+                    var response = await bitCoinBlockClient.GetFromJsonAsync<BitCoinBlockDto>(url);
+                    if (response == null)
+                        throw new HttpRequestException();
 
-                var objBitCoinBlock = _mapper.Map<BitCoinBlock>(response);
-                return await AddAsync(objBitCoinBlock);
+                    var objBitCoinBlock = _mapper.Map<BitCoinBlock>(response);
+                    return await AddAsync(objBitCoinBlock);
+                }
             }
             catch (HttpRequestException ex)
             {

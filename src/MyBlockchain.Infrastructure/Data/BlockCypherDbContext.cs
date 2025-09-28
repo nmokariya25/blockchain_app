@@ -29,6 +29,7 @@ namespace MyBlockchain.Infrastructure.Data
             modelBuilder.Entity<DashBlock>().ToTable("DashBlocks");
             modelBuilder.Entity<BtcBlock>().ToTable("BtcBlocks");
             modelBuilder.Entity<BitCoinBlock>().ToTable("BitCoinBlocks");
+            modelBuilder.Entity<LtcBlock>().ToTable("LtcBlocks");
             modelBuilder.Entity<ApiAuditLog>().ToTable("ApiAudits");
         }
     }
