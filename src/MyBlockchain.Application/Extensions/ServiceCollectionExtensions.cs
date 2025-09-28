@@ -33,6 +33,7 @@ namespace MyBlockchain.Application.Extensions
             services.AddScoped<IBitCoinBlockRepository, BitCoinBlockRepository>();
             services.AddScoped<IBtcBlockRepository, BtcBlockRepository>();
             services.AddScoped<IEthBlockRepository, EthBlockRepository>();
+            services.AddScoped<ILtcBlockRepository, LtcBlockRepository>();
             return services;
         }
     }

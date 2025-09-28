@@ -26,6 +26,7 @@ namespace MyBlockchain.Infrastructure.UnitOfWork
         public IBitCoinBlockRepository BitCoinBlockRepository { get; }
         public IBtcBlockRepository BtcBlockRepository { get; }
         public IEthBlockRepository EthBlockRepository { get; }
+        public ILtcBlockRepository LtcBlockRepository { get; }
 
         public UnitOfWork(BlockCypherDbContext context)
         {
@@ -40,6 +41,7 @@ namespace MyBlockchain.Infrastructure.UnitOfWork
             BitCoinBlockRepository = new BitCoinBlockRepository(_context);
             BtcBlockRepository = new BtcBlockRepository(_context);
             EthBlockRepository = new EthBlockRepository(_context);
+            LtcBlockRepository = new LtcBlockRepository(_context);
         }
 
         public async Task<int> CompleteAsync()
