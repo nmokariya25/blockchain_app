@@ -86,5 +86,13 @@ namespace MyBlockChain.Tests.Unit.Services
             Assert.Equal(ethBlock, result);
             _mockRepo.Verify(r => r.AddAsync(ethBlock), Times.Once);
         }
+
+        [Fact]
+        public async Task EthBlockApi_ShouldReturnStatus200()
+        {
+            var ethBlockApiUrl = "https://api.blockcypher.com/v1/eth/main";
+            var response = await new HttpClient().GetAsync(ethBlockApiUrl);
+            Assert.Equal(System.Net.HttpStatusCode.OK, response.StatusCode);
+        }
     }
 }

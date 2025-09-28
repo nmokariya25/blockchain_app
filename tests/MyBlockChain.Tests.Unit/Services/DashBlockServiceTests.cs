@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Castle.Core.Logging;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Moq;
 using MyBlockchain.Application.AutoMappers;
@@ -55,7 +56,7 @@ namespace MyBlockChain.Tests.Unit.Services
 
         [Fact]
         public async Task AddDashBlock_ReturnsDashBlock()
-        {
+        {   
             var dashBlock = new DashBlock
             {
                 Id = 1,
@@ -79,6 +80,14 @@ namespace MyBlockChain.Tests.Unit.Services
 
             Assert.Equal(dashBlock, result);
             _mockRepo.Verify(r => r.AddAsync(dashBlock), Times.Once);
+        }
+
+        [Fact]
+        public async Task DashBlockApi_ShouldReturnStatus200()
+        {
+            var dashBlockApiUrl = "https://api.blockcypher.com/v1/dash/main";
+            var response = await new HttpClient().GetAsync(dashBlockApiUrl);
+            Assert.Equal(System.Net.HttpStatusCode.OK, response.StatusCode);
         }
     }
 }

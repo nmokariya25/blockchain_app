@@ -77,6 +77,14 @@ namespace MyBlockChain.Tests.Unit.Services
             Assert.Equal(BitCoinBlock, result);
             _mockRepo.Verify(r => r.AddAsync(BitCoinBlock), Times.Once);
         }
+
+        [Fact]
+        public async Task BitCoinBlockApi_ShouldReturnStatus200()
+        {
+            var bitCoinBlockApiUrl = "https://api.blockcypher.com/v1/btc/test3";
+            var response = await new HttpClient().GetAsync(bitCoinBlockApiUrl);
+            Assert.Equal(System.Net.HttpStatusCode.OK, response.StatusCode);
+        }
     }
 }
 

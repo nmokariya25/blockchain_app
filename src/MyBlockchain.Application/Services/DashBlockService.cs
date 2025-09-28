@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -78,16 +79,23 @@ namespace MyBlockchain.Application.Services
             await _unitOfWork.CompleteAsync();
         }
 
+        public async Task<DashBlockDto> GetDashBlockDataAsync()
+        {
+            using (var dashBlockClient = _httpClientFactory.CreateClient("DashBlockClient"))
+            {
+                var url = _blockCypherEndPoints.DashBlock;
+                var dashBlock = await dashBlockClient.GetFromJsonAsync<DashBlockDto>(url);
+                if (dashBlock == null)
+                    throw new HttpRequestException("Failed to retrieve DashBlockDto from API.");
+                return dashBlock;
+            }
+        }
+
         public async Task<DashBlock> FetchAndSaveAsync()
         {
             try
             {
-                var dashBlockClient = _httpClientFactory.CreateClient("DashBlockClient");
-                var url = _blockCypherEndPoints.DashBlock;
-                var response = await dashBlockClient.GetFromJsonAsync<DashBlockDto>(url);
-                if (response == null)
-                    throw new HttpRequestException();
-
+                var response = await GetDashBlockDataAsync();
                 var objDashBlock = _mapper.Map<DashBlock>(response);
                 return await AddAsync(objDashBlock);
             }
