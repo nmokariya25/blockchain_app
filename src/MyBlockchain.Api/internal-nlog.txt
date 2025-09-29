@@ -2334,4 +2334,3 @@
 2025-09-30 00:31:36.6497 Warn Logger: Microsoft.EntityFrameworkCore.Model configured with duplicate output to target: FileTarget(Name=logfile). LoggingRule with NamePattern='*' and Level=Warn has been skipped.
 2025-09-30 00:31:36.6497 Warn Logger: Microsoft.EntityFrameworkCore.Model.Validation configured with duplicate output to target: FileTarget(Name=logfile). LoggingRule with NamePattern='*' and Level=Warn has been skipped.
 2025-09-30 00:31:37.5249 Warn Logger: Microsoft.EntityFrameworkCore.Update configured with duplicate output to target: FileTarget(Name=logfile). LoggingRule with NamePattern='*' and Level=Warn has been skipped.
-2025-09-30 00:33:37.7127 Warn Logger: Microsoft.Extensions.Http.DefaultHttpClientFactory configured with duplicate output to target: FileTarget(Name=logfile). LoggingRule with NamePattern='*' and Level=Warn has been skipped.
