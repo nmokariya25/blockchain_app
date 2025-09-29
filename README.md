@@ -26,6 +26,7 @@ The primary purpose of this project is to demonstrate the ability to integrate m
      dotnet clean
      dotnet restore
      dotnet build
+     
 ## Usage (Using Docker)
 1. Clone the repository:  
    ```bash
@@ -42,6 +43,7 @@ The primary purpose of this project is to demonstrate the ability to integrate m
 4. After successfully build docker file please run the following command to run the app using docker
    ```bash
    docker run -d -p 5000:8080 --name myblockchainapp myblockchainapp:latest
+   
 ## Usage
 1. Run actual application in local environment or Linux vm where dotnet sdk is installed
    ```bash
@@ -53,3 +55,4 @@ The primary purpose of this project is to demonstrate the ability to integrate m
       dotnet test .\tests\MyBlockChain.Tests.Functional\
       dotnet test .\tests\MyBlockChain.Tests.Integration\
       dotnet test .\tests\MyBlockChain.Tests.Unit\
+

@@ -29,7 +29,7 @@ namespace MyBlockchain.Api
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-            
+
             NLog.LogManager.Setup().LoadConfigurationFromAppSettings();
             NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -114,12 +114,19 @@ namespace MyBlockchain.Api
 
                 var app = builder.Build();
 
-		        // Apply pending EF Core migrations automatically
-                using (var scope = app.Services.CreateScope())
+                if (Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true")
                 {
-                   var db = scope.ServiceProvider.GetRequiredService<BlockCypherDbContext>();
-                   db.Database.Migrate(); // <-- This creates the tables if they don't exist
+                    // Apply pending EF Core migrations automatically while using docker
+                    using (var scope = app.Services.CreateScope())
+                    {
+                        var db = scope.ServiceProvider.GetRequiredService<BlockCypherDbContext>();
+                        db.Database.Migrate(); // <-- This creates the tables if they don't exist
+                    }
+
+                    // localhost URL changes for docker 
+                    app.Urls.Add("http://0/0.0.0:8080");
                 }
+
                 // Configure the HTTP request pipeline.
                 if (app.Environment.IsDevelopment())
                 {
@@ -133,7 +140,7 @@ namespace MyBlockchain.Api
                 app.UseAuthorization();
 
                 app.MapControllers();
-		        app.Urls.Add("http://0.0.0.0:8080");
+                app.Urls.Add("http://0.0.0.0:8080");
                 // Healthcheck endpoint
                 // Map the /health endpoint and return JSON directly
                 app.MapHealthChecks("/health", new HealthCheckOptions
