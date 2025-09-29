@@ -9,9 +9,9 @@ namespace MyBlockchain.Api.Controllers
     [Route("api/[controller]")]
     public class DashBlockController : ControllerBase
     {
-        private readonly ILogger<DashBlockController> _logger;
         private readonly IDashBlockService _dashBlockService;
-
+        private readonly ILogger<DashBlockController> _logger;
+        
         public DashBlockController(
             IDashBlockService dashBlockService,
             ILogger<DashBlockController> logger)
