@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
@@ -114,6 +114,12 @@ namespace MyBlockchain.Api
 
                 var app = builder.Build();
 
+		        // Apply pending EF Core migrations automatically
+                using (var scope = app.Services.CreateScope())
+                {
+                   var db = scope.ServiceProvider.GetRequiredService<BlockCypherDbContext>();
+                   db.Database.Migrate(); // <-- This creates the tables if they don't exist
+                }
                 // Configure the HTTP request pipeline.
                 if (app.Environment.IsDevelopment())
                 {
@@ -127,7 +133,7 @@ namespace MyBlockchain.Api
                 app.UseAuthorization();
 
                 app.MapControllers();
-                app.Urls.Add("http://0.0.0.0:8080");
+		        app.Urls.Add("http://0.0.0.0:8080");
                 // Healthcheck endpoint
                 // Map the /health endpoint and return JSON directly
                 app.MapHealthChecks("/health", new HealthCheckOptions
