@@ -128,7 +128,7 @@ namespace MyBlockchain.Api
                     }
 
                     // localhost URL changes for docker 
-                    app.Urls.Add("http://0/0.0.0:8080");
+                    app.Urls.Add("http://0.0.0.0:8080");
                 }
 
                 // Configure the HTTP request pipeline.
