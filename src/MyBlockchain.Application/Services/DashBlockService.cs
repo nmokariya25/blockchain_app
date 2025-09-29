@@ -86,7 +86,7 @@ namespace MyBlockchain.Application.Services
                 using (var dashBlockClient = _httpClientFactory.CreateClient("DashBlockClient"))
                 {
                     var url = _blockCypherEndPoints.DashBlock;
-                    var response = await dashBlockClient.GetFromJsonAsync<BtcBlockDto>(url);
+                    var response = await dashBlockClient.GetFromJsonAsync<DashBlockDto>(url);
                     if (response == null)
                         throw new HttpRequestException();
 
