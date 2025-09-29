@@ -127,7 +127,7 @@ namespace MyBlockchain.Api
                 app.UseAuthorization();
 
                 app.MapControllers();
-
+                app.Urls.Add("http://0.0.0.0:8080");
                 // Healthcheck endpoint
                 // Map the /health endpoint and return JSON directly
                 app.MapHealthChecks("/health", new HealthCheckOptions
