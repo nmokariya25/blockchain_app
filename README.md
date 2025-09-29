@@ -42,4 +42,5 @@ The primary purpose of this project is to demonstrate the ability to integrate m
 ## Contributing
 Contributions are welcome! Please open an issue or submit a pull request for bug fixes, feature requests, or improvements.
 
-   
+   >docker build -t myblockchainapp -f MyBlockchain.Api/Dockerfile .
+>docker run -d -p 5000:8080 --name myblockchainapp myblockchainapp:latest
