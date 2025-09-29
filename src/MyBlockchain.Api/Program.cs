@@ -79,7 +79,11 @@ namespace MyBlockchain.Api
                 });
 
                 builder.Services.AddFluentValidationAutoValidation();
-                builder.Services.AddValidatorsFromAssemblyContaining<SampleValidator>();
+                builder.Services.AddValidatorsFromAssemblyContaining<DashBlockChainValidator>();
+                builder.Services.AddValidatorsFromAssemblyContaining<BitCoinBlockChainValidator>();
+                builder.Services.AddValidatorsFromAssemblyContaining<BtcBlockChainValidator>();
+                builder.Services.AddValidatorsFromAssemblyContaining<EthBlockChainValidator>();
+                builder.Services.AddValidatorsFromAssemblyContaining<LtcBlockChainValidator>();
 
                 // Register Action Filters
                 builder.Services.AddScoped<ApiAuditLogFilter>();
@@ -140,7 +144,6 @@ namespace MyBlockchain.Api
                 app.UseAuthorization();
 
                 app.MapControllers();
-                app.Urls.Add("http://0.0.0.0:8080");
                 // Healthcheck endpoint
                 // Map the /health endpoint and return JSON directly
                 app.MapHealthChecks("/health", new HealthCheckOptions
