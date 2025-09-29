@@ -34,9 +34,7 @@ namespace MyBlockChain.Tests.Functional.Controllers
             var content = new StringContent("{}", Encoding.UTF8, "application/json");
             var response = await _client.PostAsync("/api/EthBlock/fetch", content);
             var body = await response.Content.ReadAsStringAsync();
-            Console.WriteLine($"Response Code: {response.StatusCode}");
-            Console.WriteLine($"Response Body: {body}");
-
+            
             // Assert   
             Assert.Equal(HttpStatusCode.OK, response.StatusCode); 
         }
