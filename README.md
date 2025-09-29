@@ -43,7 +43,7 @@ The primary purpose of this project is to demonstrate the ability to integrate m
    ```bash
    docker run -d -p 5000:8080 --name myblockchainapp myblockchainapp:latest
 ## Usage
-1. Run actual application
+1. Run actual application in local environment or Linux vm where dotnet sdk is installed
    ```bash
       dotnet run
 
