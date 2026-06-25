@@ -102,7 +102,7 @@ namespace MyBlockchain.Application.Services
             catch (Exception ex)
             {
                 _logger.LogError($"There is some issue while saving the records. Exception is: {JsonConvert.SerializeObject(ex)}");
-                throw new Exception("Failed to save the latest Dashblock.");
+                throw new Exception("Failed to save the latest Dash block.");
             }
         }
 

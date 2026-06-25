@@ -24,6 +24,7 @@ namespace MyBlockchain.Infrastructure.UnitOfWork
         IBtcBlockRepository BtcBlockRepository { get; }
         IEthBlockRepository EthBlockRepository { get; }
         ILtcBlockRepository LtcBlockRepository { get; }
+        IApiAuditRepository ApiAuditRepository { get; }
 
         Task<int> CompleteAsync();
     }

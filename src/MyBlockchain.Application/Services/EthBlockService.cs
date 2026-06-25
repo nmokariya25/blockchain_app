@@ -85,8 +85,8 @@ namespace MyBlockchain.Application.Services
                     if (response == null)
                         throw new HttpRequestException();
 
-                    var objDashBlock = _mapper.Map<EthBlock>(response);
-                    return await AddAsync(objDashBlock);
+                    var ethBlock = _mapper.Map<EthBlock>(response);
+                    return await AddAsync(ethBlock);
                 }
             }
             catch (HttpRequestException ex)
@@ -97,7 +97,7 @@ namespace MyBlockchain.Application.Services
             catch (Exception ex)
             {
                 _logger.LogError($"There is some issue while saving the records. Exception is: {JsonConvert.SerializeObject(ex)}");
-                throw new Exception("Failed to save the latest Dashblock.");
+                throw new Exception("Failed to save the latest Eth block.");
             }
         }
 

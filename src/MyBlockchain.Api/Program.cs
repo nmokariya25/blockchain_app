@@ -38,8 +38,6 @@ namespace MyBlockchain.Api
                 logger.Debug("init main");
 
                 // Add services to the container.
-                builder.Services.AddControllers();
-
                 builder.Logging.ClearProviders();
                 builder.Logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
                 builder.Host.UseNLog();  // NLog: setup NLog for Dependency injection
@@ -52,7 +50,11 @@ namespace MyBlockchain.Api
                     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"))
                     .EnableSensitiveDataLogging().LogTo(message => Debug.WriteLine(message), LogLevel.Information));
 
-                builder.Services.AddHttpClient();
+                builder.Services.AddHttpClient("EthBlockClient");
+                builder.Services.AddHttpClient("DashBlockClient");
+                builder.Services.AddHttpClient("BtcBlockClient");
+                builder.Services.AddHttpClient("BitCoinBlockClient");
+                builder.Services.AddHttpClient("LtcBlockClient");
 
                 // Register Unit of Work and Services (Dependency Injection)
                 builder.Services.AddApplicationServices();
@@ -62,12 +64,12 @@ namespace MyBlockchain.Api
                 builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
 
                 // Read the configuration from appsettings.json
-                builder.Services.AddSingleton<BlockCypherEndPoints>();
                 builder.Services.Configure<BlockCypherEndPoints>(builder.Configuration.GetSection("BlockCypherEndPoints"));
 
                 // Register Healthcheck
                 builder.Services.AddHealthChecks()
-                    .AddCheck("self", () => HealthCheckResult.Healthy());
+                    .AddCheck("self", () => HealthCheckResult.Healthy())
+                    .AddDbContextCheck<BlockCypherDbContext>("database");
 
                 // CORS policy
                 builder.Services.AddCors(options =>
@@ -144,9 +146,8 @@ namespace MyBlockchain.Api
                 app.UseAuthorization();
 
                 app.MapControllers();
-                // Healthcheck endpoint
-                // Map the /health endpoint and return JSON directly
-                app.MapHealthChecks("/health", new HealthCheckOptions
+
+                var healthCheckOptions = new HealthCheckOptions
                 {
                     ResponseWriter = async (context, report) =>
                     {
@@ -169,7 +170,10 @@ namespace MyBlockchain.Api
                             WriteIndented = true
                         }));
                     }
-                });
+                };
+
+                app.MapHealthChecks("/health", healthCheckOptions);
+                app.MapHealthChecks("/healthchecks", healthCheckOptions);
 
                 app.Run();
             }

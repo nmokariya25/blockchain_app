@@ -24,5 +24,10 @@ namespace MyBlockchain.Application.Services
             await _unitOfWork.CompleteAsync();
             return apiAuditLog;
         }
+
+        public async Task<IEnumerable<ApiAuditLog>> GetHistoryAsync(int count = 0)
+        {
+            return await _unitOfWork.ApiAuditRepository.FetchAllLatestAsync(count);
+        }
     }
 }

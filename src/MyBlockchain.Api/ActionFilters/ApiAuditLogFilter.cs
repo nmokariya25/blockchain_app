@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
 using MyBlockchain.Application.Interfaces;
 using MyBlockchain.Domain.Entities;
-using MyBlockchain.Infrastructure.Data;
 using System.Text;
 
 namespace MyBlockchain.Api.ActionFilters
@@ -18,31 +17,40 @@ namespace MyBlockchain.Api.ActionFilters
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
             var request = context.HttpContext.Request;
-            request.EnableBuffering();
-            var requestBody = "";
-            using (var reader = new StreamReader(request.Body, Encoding.UTF8, detectEncodingFromByteOrderMarks: false, leaveOpen: true))
+            var isAuditEndpoint = request.Path.StartsWithSegments("/api/ApiAudit");
+            var requestDate = DateTime.UtcNow;
+            var requestBody = string.Empty;
+
+            if (!isAuditEndpoint)
             {
-                requestBody = await reader.ReadToEndAsync();
-                request.Body.Position = 0;
+                request.EnableBuffering();
+                using (var reader = new StreamReader(request.Body, Encoding.UTF8, detectEncodingFromByteOrderMarks: false, leaveOpen: true))
+                {
+                    requestBody = await reader.ReadToEndAsync();
+                    request.Body.Position = 0;
+                }
             }
 
+            await next();
+
+            if (isAuditEndpoint)
+                return;
+
+            var response = context.HttpContext.Response;
             var auditLog = new ApiAuditLog
             {
                 HttpMethod = request.Method,
                 Path = request.Path,
                 QueryString = request.QueryString.ToString(),
                 RequestBody = requestBody,
-                RequestDate = DateTime.UtcNow
+                Scheme = request.Scheme,
+                IsHttps = request.IsHttps,
+                StatusCode = response.StatusCode,
+                RequestDate = requestDate,
+                ResponseDate = DateTime.UtcNow
             };
 
-            // Proceed to the action
-            var executedContext = await next();
-
-            var response = context.HttpContext.Response;
-            auditLog.StatusCode = response.StatusCode;
-            auditLog.ResponseDate = DateTime.UtcNow;
             await _apiAuditService.AddAsync(auditLog);
         }
     }
-
 }

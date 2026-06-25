@@ -10,5 +10,6 @@ namespace MyBlockchain.Application.Interfaces
     public interface IApiAuditService
     {
         Task<ApiAuditLog> AddAsync(ApiAuditLog apiAuditLog);
+        Task<IEnumerable<ApiAuditLog>> GetHistoryAsync(int count = 0);
     }
 }

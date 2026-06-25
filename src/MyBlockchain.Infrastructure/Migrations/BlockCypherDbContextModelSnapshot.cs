@@ -27,6 +27,9 @@ namespace MyBlockchain.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("IsHttps")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Path")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -43,6 +46,10 @@ namespace MyBlockchain.Infrastructure.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("ResponseDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Scheme")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<int>("StatusCode")

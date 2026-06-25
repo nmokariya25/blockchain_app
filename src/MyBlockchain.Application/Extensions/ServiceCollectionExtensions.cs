@@ -23,6 +23,7 @@ namespace MyBlockchain.Application.Extensions
             services.AddScoped<ILtcBlockService, LtcBlockService>();
             services.AddScoped<IBitCoinBlockService, BitCoinBlockService>();
             services.AddScoped<IApiAuditService, ApiAuditService>();
+            services.AddScoped<IBlockchainOrchestrationService, BlockchainOrchestrationService>();
 
             return services;
         }
@@ -34,6 +35,7 @@ namespace MyBlockchain.Application.Extensions
             services.AddScoped<IBtcBlockRepository, BtcBlockRepository>();
             services.AddScoped<IEthBlockRepository, EthBlockRepository>();
             services.AddScoped<ILtcBlockRepository, LtcBlockRepository>();
+            services.AddScoped<IApiAuditRepository, ApiAuditRepository>();
             return services;
         }
     }

@@ -1,0 +1,16 @@
+services:
+  myblockchainapp:
+    build:
+      context: ./src
+      dockerfile: MyBlockchain.Api/Dockerfile
+    ports:
+      - "5000:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - DOTNET_RUNNING_IN_CONTAINER=true
+      - ConnectionStrings__DefaultConnection=Data Source=/app/data/block_cypher_data.db
+    volumes:
+      - blockchain-data:/app/data
+
+volumes:
+  blockchain-data:

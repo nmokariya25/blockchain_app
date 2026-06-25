@@ -78,13 +78,13 @@ namespace MyBlockchain.Application.Services
             {
                 using (var ltcBlockClient = _httpClientFactory.CreateClient("LtcBlockClient"))
                 {
-                    var url = _blockCypherEndPoints.EthBlock;
+                    var url = _blockCypherEndPoints.LtcBlock;
                     var response = await ltcBlockClient.GetFromJsonAsync<LtcBlockDto>(url);
                     if (response == null)
                         throw new HttpRequestException();
 
-                    var obcLtcBlock = _mapper.Map<LtcBlock>(response);
-                    return await AddAsync(obcLtcBlock);
+                    var ltcBlock = _mapper.Map<LtcBlock>(response);
+                    return await AddAsync(ltcBlock);
                 }
             }
             catch (HttpRequestException ex)
@@ -95,7 +95,7 @@ namespace MyBlockchain.Application.Services
             catch (Exception ex)
             {
                 _logger.LogError($"There is some issue while saving the records. Exception is: {JsonConvert.SerializeObject(ex)}");
-                throw new Exception("Failed to save the latest Dashblock.");
+                throw new Exception("Failed to save the latest Ltc block.");
             }
         }
 

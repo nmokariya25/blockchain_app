@@ -21,11 +21,10 @@ WORKDIR /app
 # Copy published output from build stage
 COPY --from=build /app/publish .
 
-# Configure environment (e.g. listen on port 80)
-ENV ASPNETCORE_URLS="http://+:80"
+# Configure environment (listen on port 8080)
+ENV ASPNETCORE_URLS="http://+:8080"
 ENV ASPNETCORE_ENVIRONMENT=Development
 ENV DOTNET_RUNNING_IN_CONTAINER=true
-# (If your app expects other environment variables, set them here or via docker-compose)
 
 EXPOSE 8080
 
